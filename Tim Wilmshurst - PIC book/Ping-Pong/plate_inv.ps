@@ -1,0 +1,555 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%Title: EAGLE Drawing Z:/work/radio/Tim Wilmshurst - PIC book/Ping-Pong/base.brd
+%%Creator: EAGLE
+%%Pages: 1
+%%BoundingBox: 0 0 576 810
+%%EndComments
+
+% Coordinate transfer:
+
+/EU { 254 div 0.072 mul } def
+/inch { 72 mul } def
+
+% Linestyle:
+
+1 setlinecap
+1 setlinejoin
+
+% Drawing functions:
+
+/l {  % draw a line
+   /lw exch def
+   /y2 exch def
+   /x2 exch def
+   /y1 exch def
+   /x1 exch def
+   newpath
+   x1 EU y1 EU moveto
+   x2 EU y2 EU lineto
+   lw EU setlinewidth
+   stroke
+   } def
+
+/h {  % draw a hole
+   /d  exch def
+   /y  exch def
+   /x  exch def
+   d 0 gt {
+     newpath
+     x EU y EU d 2 div EU 0 360 arc
+     currentgray dup
+     1 exch sub setgray
+     fill
+     setgray
+     } if
+   } def
+
+/b {  % draw a bar
+   /an exch def
+   /y2 exch def
+   /x2 exch def
+   /y1 exch def
+   /x1 exch def
+   /w2 x2 x1 sub 2 div EU def
+   /h2 y2 y1 sub 2 div EU def
+   gsave
+   x1 x2 add 2 div EU y1 y2 add 2 div EU translate
+   an rotate
+   newpath
+   w2     h2     moveto
+   w2 neg h2     lineto
+   w2 neg h2 neg lineto
+   w2     h2 neg lineto
+   closepath
+   fill
+   grestore
+   } def
+
+/c {  % draw a circle
+   /lw exch def
+   /rd exch def
+   /y  exch def
+   /x  exch def
+   newpath
+   lw EU setlinewidth
+   x EU y EU rd EU 0 360 arc
+   stroke
+   } def
+
+/a {  % draw an arc
+   /lc exch def
+   /ae exch def
+   /as exch def
+   /lw exch def
+   /rd exch def
+   /y  exch def
+   /x  exch def
+   lw rd 2 mul gt {
+     /rd rd lw 2 div add 2 div def
+     /lw rd 2 mul def
+     } if
+   currentlinecap currentlinejoin
+   lc setlinecap 0 setlinejoin
+   newpath
+   lw EU setlinewidth
+   x EU y EU rd EU as ae arc
+   stroke
+   setlinejoin setlinecap
+   } def
+
+/p {  % draw a pie
+   /d exch def
+   /y exch def
+   /x exch def
+   newpath
+   x EU y EU d 2 div EU 0 360 arc
+   fill
+   } def
+
+/edge { 0.20710678119 mul } def
+
+/o {  % draw an octagon
+   /an exch def
+   /dy exch def
+   /dx exch def
+   /y  exch def
+   /x  exch def
+   gsave
+   x EU y EU translate
+   an dx dy lt { 90 add /dx dy /dy dx def def } if rotate
+   newpath
+      0 dx 2 div sub EU                    0 dy edge  add EU moveto
+      0 dx dy sub 2 div sub dy edge sub EU 0 dy 2 div add EU lineto
+      0 dx dy sub 2 div add dy edge add EU 0 dy 2 div add EU lineto
+      0 dx 2 div add EU                    0 dy edge  add EU lineto
+      0 dx 2 div add EU                    0 dy edge  sub EU lineto
+      0 dx dy sub 2 div add dy edge add EU 0 dy 2 div sub EU lineto
+      0 dx dy sub 2 div sub dy edge sub EU 0 dy 2 div sub EU lineto
+      0 dx 2 div sub EU                    0 dy edge  sub EU lineto
+   closepath
+   fill
+   grestore
+   } def
+
+% the real drawing size:
+
+/MinDrawX      0 EU def
+/MinDrawY      0 EU def
+/MaxDrawX 589568 EU def
+/MaxDrawY 357888 EU def
+
+% the usable page size:
+
+/LeftMargin 0.25 inch def  % change these if drawing gets clipped!
+/BotMargin  0.25 inch def
+/PageWidth   7.7500 inch def
+/PageHeight 11.0000 inch def
+
+% are we going to rotate?:
+
+/RotateDrawing 0 0 ne def
+
+% Media size functions:
+
+/AbortMessage {  % Show a message in a box and stop printing
+   /h 100 def
+   /Courier findfont 12 scalefont setfont
+   mediawidth pagemargin sub h 1 setpage
+   newpath
+   0 0 moveto
+   0 h rlineto
+   mediawidth pagemargin sub 0 rlineto
+   0 h neg rlineto
+   closepath
+   5 setlinewidth
+   stroke
+   newpath 50 60 moveto (ERROR: Jobsize exceeds physical printing area!) show
+   newpath 50 40 moveto (       Job has been aborted!) show
+   showpage
+   stop
+   } def
+
+/SelectPage {  % Select the page identified by Row and Column
+   /Column exch def
+   /Row    exch def
+
+   % the actually exposed area (if the machine knows these parameters!):
+
+   /DrawX MaxDrawX MinDrawX sub def
+   /DrawY MaxDrawY MinDrawY sub def
+   statusdict /setpage known
+   statusdict /mediawidth known and
+   statusdict /medialength known and
+   statusdict /pagemargin known and {
+      % this is for machines that can tell the media size:
+      statusdict begin
+         /MediaW mediawidth pagemargin sub def
+         DrawX DrawY ge {
+            DrawX MediaW le DrawY medialength le and {
+               MediaW DrawY 1 setpage
+               MediaW DrawX sub 2 div 0 translate
+               }{
+            DrawY MediaW le DrawX medialength le and {
+               MediaW DrawX 0 setpage
+               0 MediaW DrawY sub 2 div translate
+               }{
+               AbortMessage
+               } ifelse
+               } ifelse
+            }{
+            DrawY MediaW le DrawX medialength le and {
+               MediaW DrawX 0 setpage
+               0 MediaW DrawY sub 2 div translate
+               }{
+            DrawX MediaW le DrawY medialength le and {
+               MediaW DrawY 1 setpage
+               MediaW DrawX sub 2 div 0 translate
+               }{
+               AbortMessage
+               } ifelse
+               } ifelse
+            } ifelse
+         end
+      }{
+      % this is for machines that can NOT tell the media size:
+      % (Ghostscript doesn't like this!)
+      /Product product length string def
+      /i 0 def
+      product { dup 97 lt { 32 add } if Product exch i exch put /i i 1 add def } forall 
+      Product (ghostscript) search dup /IsGhostscript exch def
+      { pop pop } if
+      pop
+      IsGhostscript not {
+         statusdict /setpage known {
+            statusdict begin
+               RotateDrawing {
+                  LeftMargin PageHeight add BotMargin DrawY add
+                  }{
+                  BotMargin DrawY add LeftMargin DrawX add 
+                  } ifelse
+               0 setpage
+               end
+            } if
+         } if
+      % set clipping boundary:
+      newpath
+      LeftMargin BotMargin moveto
+      0 PageHeight rlineto
+      PageWidth  0 rlineto
+      0 PageHeight neg rlineto
+      closepath
+      clip
+      % set the origin:
+      LeftMargin BotMargin translate
+      RotateDrawing {
+         0 PageHeight translate
+         -90 rotate
+         PageHeight Column mul neg PageWidth Row mul neg translate
+         }{
+         PageWidth Column mul neg PageHeight Row mul neg translate
+         } ifelse
+      } ifelse
+   % move the lower left corner of the drawing to the origin:
+   MinDrawX neg MinDrawY neg translate
+   
+   % Linestyle:
+   
+   1 setlinecap
+   1 setlinejoin
+   
+   % invert drawing:
+   newpath
+   MinDrawX MinDrawY moveto
+   MaxDrawX MinDrawY lineto
+   MaxDrawX MaxDrawY lineto
+   MinDrawX MaxDrawY lineto
+   0 setgray
+   closepath fill
+   1 setgray
+   
+   } def
+
+% TheDrawing
+
+gsave 0 0 SelectPage
+247044 314160 265332 314160 18288 l
+247044 288760 265332 288760 18288 l
+247044 263360 265332 263360 18288 l
+247044 237960 265332 237960 18288 l
+247044 212560 265332 212560 18288 l
+247044 187160 265332 187160 18288 l
+247044 161760 265332 161760 18288 l
+247044 136360 265332 136360 18288 l
+247044 110960 265332 110960 18288 l
+323244 110960 341532 110960 18288 l
+323244 136360 341532 136360 18288 l
+323244 161760 341532 161760 18288 l
+323244 187160 341532 187160 18288 l
+323244 212560 341532 212560 18288 l
+323244 237960 341532 237960 18288 l
+323244 263360 341532 263360 18288 l
+323244 288760 341532 288760 18288 l
+323244 314160 341532 314160 18288 l
+461588 82560 18288 18288 0.0 o
+486988 82560 18288 18288 0.0 o
+411588 82560 18288 18288 0.0 o
+436988 82560 18288 18288 0.0 o
+361588 82560 18288 18288 0.0 o
+386988 82560 18288 18288 0.0 o
+336988 82560 18288 18288 180.0 o
+311588 82560 18288 18288 180.0 o
+261588 82560 18288 18288 0.0 o
+286988 82560 18288 18288 0.0 o
+211588 82560 18288 18288 0.0 o
+236988 82560 18288 18288 0.0 o
+186988 82560 18288 18288 180.0 o
+161588 82560 18288 18288 180.0 o
+136988 82560 18288 18288 180.0 o
+111588 82560 18288 18288 180.0 o
+94288 270660 18288 18288 0.0 o
+94288 194460 18288 18288 0.0 o
+366188 312560 18288 18288 0.0 o
+442388 312560 18288 18288 0.0 o
+366188 282560 18288 18288 0.0 o
+442388 282560 18288 18288 0.0 o
+214288 219860 18288 18288 0.0 o
+214288 245260 18288 18288 0.0 o
+174288 219860 18288 18288 0.0 o
+174288 245260 18288 18288 0.0 o
+386988 212560 18288 18288 180.0 o
+361588 212560 18288 18288 180.0 o
+491588 42560 18288 18288 0.0 o
+516988 42560 18288 18288 0.0 o
+431588 42560 18288 18288 0.0 o
+456988 42560 18288 18288 0.0 o
+371588 42560 18288 18288 0.0 o
+396988 42560 18288 18288 0.0 o
+311588 42560 18288 18288 0.0 o
+336988 42560 18288 18288 0.0 o
+276988 42560 18288 18288 180.0 o
+251588 42560 18288 18288 180.0 o
+216988 42560 18288 18288 180.0 o
+191588 42560 18288 18288 180.0 o
+156988 42560 18288 18288 180.0 o
+131588 42560 18288 18288 180.0 o
+96988 42560 18288 18288 180.0 o
+71588 42560 18288 18288 180.0 o
+124288 155260 18288 18288 0.0 o
+124288 129860 18288 18288 0.0 o
+481588 292560 18288 18288 0.0 o
+506988 292560 18288 18288 0.0 o
+481588 222560 18288 18288 0.0 o
+506988 222560 18288 18288 0.0 o
+424288 167160 18288 18288 0.0 o
+424288 217960 18288 18288 0.0 o
+419688 252560 18288 18288 180.0 o
+368888 252560 18288 18288 180.0 o
+204288 312560 25400 25400 0.0 o
+164288 312560 25400 25400 0.0 o
+134288 242560 25400 25400 0.0 o
+134288 192560 25400 25400 0.0 o
+459288 162560 25400 25400 0.0 o
+509288 162560 25400 25400 0.0 o
+486988 82560 486988 47160 6096 l
+486988 47160 491588 42560 6096 l
+436988 82560 436988 47960 6096 l
+436988 47960 431588 42560 6096 l
+386988 82560 386988 57960 6096 l
+386988 57960 371588 42560 6096 l
+311588 82560 311588 42560 6096 l
+286988 82560 286988 52560 6096 l
+286988 52560 276988 42560 6096 l
+236988 82560 236988 62560 6096 l
+236988 62560 216988 42560 6096 l
+161588 82560 161588 47160 6096 l
+161588 47160 156988 42560 6096 l
+111588 82560 111588 57160 6096 l
+111588 57160 96988 42560 6096 l
+64288 22560 131588 22560 6096 l
+396988 22560 456988 22560 6096 l
+524288 22560 524288 42560 6096 l
+524288 42560 524288 162560 6096 l
+524288 42560 516988 42560 6096 l
+131588 22560 131588 42560 6096 l
+131588 22560 191588 22560 6096 l
+191588 22560 191588 42560 6096 l
+191588 22560 251588 22560 6096 l
+251588 22560 251588 42560 6096 l
+336988 22560 336988 42560 6096 l
+251588 22560 336988 22560 6096 l
+396988 22560 396988 42560 6096 l
+336988 22560 396988 22560 6096 l
+456988 22560 456988 42560 6096 l
+456988 22560 524288 22560 6096 l
+524288 162560 509288 162560 6096 l
+524288 162560 524288 192560 6096 l
+524288 192560 524288 222560 6096 l
+524288 222560 506988 222560 6096 l
+524288 222560 524288 292560 6096 l
+524288 292560 506988 292560 6096 l
+64288 42560 71588 42560 6096 l
+64288 129860 124288 129860 6096 l
+64288 42560 64288 129860 6096 l
+64288 22560 64288 42560 6096 l
+64288 129860 64288 292560 6096 l
+194288 192560 134288 192560 6096 l
+194288 192560 214288 192560 6096 l
+214288 192560 234288 212560 6096 l
+234288 212560 256188 212560 6096 l
+524288 192560 444288 192560 6096 l
+419688 222560 419688 252560 6096 l
+424288 217960 419688 222560 6096 l
+424288 212560 424288 217960 6096 l
+444288 192560 424288 212560 6096 l
+124288 129860 131588 129860 6096 l
+131588 129860 194288 192560 6096 l
+64288 292560 144288 292560 6096 l
+144288 292560 164288 312560 6096 l
+332388 187160 349688 187160 6096 l
+349688 187160 404288 132560 6096 l
+404288 132560 434288 132560 6096 l
+434288 132560 461588 105260 6096 l
+461588 105260 461588 82560 6096 l
+332388 161760 345088 161760 6096 l
+345088 161760 411588 95260 6096 l
+411588 95260 411588 82560 6096 l
+340488 136360 332388 136360 6096 l
+361588 115260 340488 136360 6096 l
+361588 82560 361588 115260 6096 l
+336988 106360 332388 110960 6096 l
+336988 82560 336988 106360 6096 l
+261588 82560 261588 105560 6096 l
+261588 105560 256188 110960 6096 l
+211588 82560 211588 99860 6096 l
+211588 99860 244288 132560 6096 l
+244288 132560 252388 132560 6096 l
+252388 132560 256188 136360 6096 l
+186988 82560 186988 115260 6096 l
+186988 115260 233488 161760 6096 l
+233488 161760 256188 161760 6096 l
+136988 82560 136988 95260 6096 l
+136988 95260 228888 187160 6096 l
+228888 187160 256188 187160 6096 l
+94288 155260 124288 155260 6096 l
+94288 155260 94288 194460 6096 l
+442388 312560 481588 312560 6096 l
+481588 312560 481588 292560 6096 l
+94288 270660 162388 270660 6096 l
+162388 270660 174288 282560 6096 l
+174288 282560 214288 282560 6096 l
+214288 282560 244288 312560 6096 l
+244288 312560 254588 312560 6096 l
+254588 312560 256188 314160 6096 l
+366188 314160 366188 312560 6096 l
+332388 314160 366188 314160 6096 l
+464288 282560 442388 282560 6096 l
+464288 222560 464288 282560 6096 l
+464288 222560 481588 222560 6096 l
+366188 288760 366188 282560 6096 l
+332388 288760 366188 288760 6096 l
+204288 332560 204288 312560 6096 l
+294288 332560 204288 332560 6096 l
+294288 263360 294288 332560 6096 l
+256188 263360 294288 263360 6096 l
+214288 245260 232388 263360 6096 l
+232388 263360 256188 263360 6096 l
+174288 245260 191588 262560 6096 l
+191588 262560 214288 262560 6096 l
+214288 262560 240488 288760 6096 l
+240488 288760 256188 288760 6096 l
+134288 242560 171588 242560 6096 l
+171588 242560 174288 245260 6096 l
+174288 219860 214288 219860 6096 l
+214288 219860 232388 237960 6096 l
+232388 237960 256188 237960 6096 l
+256188 237960 294288 237960 6096 l
+294288 237960 294288 212560 6096 l
+294288 212560 332388 212560 6096 l
+332388 212560 361588 212560 6096 l
+424288 167160 428888 162560 6096 l
+428888 162560 459288 162560 6096 l
+424288 167160 406988 167160 6096 l
+406988 167160 361588 212560 6096 l
+368888 252560 386988 234460 6096 l
+386988 234460 386988 212560 6096 l
+368888 252560 358088 263360 6096 l
+358088 263360 332388 263360 6096 l
+256188 314160 8128 h
+256188 288760 8128 h
+256188 263360 8128 h
+256188 237960 8128 h
+256188 212560 8128 h
+256188 187160 8128 h
+256188 161760 8128 h
+256188 136360 8128 h
+256188 110960 8128 h
+332388 110960 8128 h
+332388 136360 8128 h
+332388 161760 8128 h
+332388 187160 8128 h
+332388 212560 8128 h
+332388 237960 8128 h
+332388 263360 8128 h
+332388 288760 8128 h
+332388 314160 8128 h
+461588 82560 8128 h
+486988 82560 8128 h
+411588 82560 8128 h
+436988 82560 8128 h
+361588 82560 8128 h
+386988 82560 8128 h
+336988 82560 8128 h
+311588 82560 8128 h
+261588 82560 8128 h
+286988 82560 8128 h
+211588 82560 8128 h
+236988 82560 8128 h
+186988 82560 8128 h
+161588 82560 8128 h
+136988 82560 8128 h
+111588 82560 8128 h
+94288 270660 8128 h
+94288 194460 8128 h
+366188 312560 8128 h
+442388 312560 8128 h
+366188 282560 8128 h
+442388 282560 8128 h
+214288 219860 8128 h
+214288 245260 8128 h
+174288 219860 8128 h
+174288 245260 8128 h
+386988 212560 8128 h
+361588 212560 8128 h
+491588 42560 8128 h
+516988 42560 8128 h
+431588 42560 8128 h
+456988 42560 8128 h
+371588 42560 8128 h
+396988 42560 8128 h
+311588 42560 8128 h
+336988 42560 8128 h
+276988 42560 8128 h
+251588 42560 8128 h
+216988 42560 8128 h
+191588 42560 8128 h
+156988 42560 8128 h
+131588 42560 8128 h
+96988 42560 8128 h
+71588 42560 8128 h
+124288 155260 8128 h
+124288 129860 8128 h
+481588 292560 8128 h
+506988 292560 8128 h
+481588 222560 8128 h
+506988 222560 8128 h
+424288 167160 8128 h
+424288 217960 8128 h
+419688 252560 8128 h
+368888 252560 8128 h
+204288 312560 10160 h
+164288 312560 10160 h
+134288 242560 10160 h
+134288 192560 10160 h
+459288 162560 10160 h
+509288 162560 10160 h
+showpage grestore
