@@ -1,0 +1,60 @@
+MPASM  5.37                          COPY.ASM   11-2-2010  16:12:34         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001                 list p=16F84A
+                      00002 
+  00000003            00003 status  equ     3
+  00000005            00004 porta   equ     5
+  00000005            00005 trisa   equ 5
+  00000006            00006 portb   equ     6
+  00000006            00007 trisb   equ 6
+                      00008 
+0000                  00009                 org 0
+                      00010 
+0000   1683           00011 start   bsf             status, 5
+0001   3018           00012                 movlw   B'00011000'
+0002   0085           00013                 movwf   trisa
+0003   3000           00014                 movlw   0
+0004   0086           00015                 movwf   trisb
+0005   1283           00016                 bcf             status, 5
+0006   0185           00017                 clrf    porta
+0007   0805           00018 loop    movf    porta, 0
+0008   0086           00019                 movwf   portb
+0009   2807           00020                 goto    loop
+000A   0061           00021                 halt
+                      00022                 end
+MPASM  5.37                          COPY.ASM   11-2-2010  16:12:34         PAGE  2
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+__16F84A                          00000001
+__DEBUG                           1
+loop                              00000007
+porta                             00000005
+portb                             00000006
+start                             00000000
+status                            00000003
+trisa                             00000005
+trisb                             00000006
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : XXXXXXXXXXX----- ---------------- ---------------- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:    11
+Program Memory Words Free:  1013
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+
