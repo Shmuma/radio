@@ -1,0 +1,82 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Sat Nov 06 11:33:28 2010
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000002    program   0x0000e0
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000002    0x000071      
+            113 out of 1093 program addresses used, program memory utilization is 10%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                     del1   0x000067    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                     del2   0x00006e    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   delay5   0x000065    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                 delay500   0x00006c    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   l_to_r   0x000037    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              lft_myscore   0x000057    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              lft_yrscore   0x000058    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_0   0x00003b    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_1   0x00003d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_2   0x000044    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_3   0x00004b    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   ltrend   0x00004f    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   r_to_l   0x000015    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               rt_myscore   0x000035    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               rt_yrscore   0x000036    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_0   0x000019    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_1   0x00001d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_2   0x000022    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_3   0x000029    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   rtlend   0x00002d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               score_left   0x000059    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              score_right   0x00005f    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    start   0x000002    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                     wait   0x000008    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    wait1   0x000010    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    start   0x000002    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                     wait   0x000008    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    wait1   0x000010    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   r_to_l   0x000015    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_0   0x000019    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_1   0x00001d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_2   0x000022    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    rtl_3   0x000029    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   rtlend   0x00002d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               rt_myscore   0x000035    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               rt_yrscore   0x000036    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   l_to_r   0x000037    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_0   0x00003b    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_1   0x00003d    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_2   0x000044    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                    ltr_3   0x00004b    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   ltrend   0x00004f    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              lft_myscore   0x000057    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              lft_yrscore   0x000058    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+               score_left   0x000059    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+              score_right   0x00005f    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                   delay5   0x000065    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                     del1   0x000067    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                 delay500   0x00006c    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+                     del2   0x00006e    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog\pingpong.asm
+
+

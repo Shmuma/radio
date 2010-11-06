@@ -1,0 +1,243 @@
+MPASM  5.37                      PINGPONG.ASM   11-6-2010  11:33:28         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001                 list    p=16F84A
+                      00002 
+  00000003            00003 status          equ     3
+  00000005            00004 porta           equ     5
+  00000005            00005 trisa           equ     5
+  00000006            00006 portb           equ     6
+  00000006            00007 trisb           equ     6
+                      00008 
+  00000020            00009 led_durn        equ     20
+  00000010            00010 delcntr1        equ     10
+  00000011            00011 delcntr2        equ     11
+  00000012            00012 led_posn        equ     12
+  00000013            00013 loop_cntr       equ     13
+                      00014 
+0000                  00015                 org     0
+0000   2802           00016                 goto    start
+                      00017 
+0002                  00018                 org     2
+0002   1683           00019 start           bsf     status, 5
+0003   3018           00020                 movlw   B'00011000'
+0004   0085           00021                 movwf   trisa
+0005   3000           00022                 movlw   0
+0006   0086           00023                 movwf   trisb
+0007   1283           00024                 bcf     status, 5
+                      00025 
+0008   3004           00026 wait            movlw   4
+0009   0085           00027                 movwf   porta
+000A   3000           00028                 movlw   0
+000B   0086           00029                 movwf   portb
+                      00030 
+000C   1E05           00031                 btfss   porta, 4
+000D   2808           00032                 goto    wait
+000E   1D85           00033                 btfss   porta, 3
+000F   2808           00034                 goto    wait
+                      00035 
+0010   1E05           00036 wait1           btfss   porta, 4
+0011   2815           00037                 goto    r_to_l
+0012   1E06           00038                 btfss   portb, 4
+0013   2815           00039                 goto    r_to_l
+0014   2810           00040                 goto    wait1
+                      00041 
+0015   3000           00042 r_to_l          movlw   0
+0016   0085           00043                 movwf   porta
+0017   3080           00044                 movlw   80
+0018   0092           00045                 movwf   led_posn
+                      00046 
+0019   3020           00047 rtl_0           movlw   led_durn
+001A   0093           00048                 movwf   loop_cntr
+                      00049 
+001B   0812           00050                 movf    led_posn, w
+001C   0086           00051                 movwf   portb
+                      00052 
+                      00053 
+MPASM  5.37                      PINGPONG.ASM   11-6-2010  11:33:28         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001D   1F92           00054 rtl_1           btfss   led_posn, 7
+001E   2822           00055                 goto    rtl_2
+001F   1D85           00056                 btfss   porta, 3
+0020   2835           00057                 goto    rt_myscore
+0021   282D           00058                 goto    rtlend
+                      00059 
+0022   1C12           00060 rtl_2           btfss   led_posn, 0
+0023   2829           00061                 goto    rtl_3
+0024   1D85           00062                 btfss   porta, 3
+0025   2837           00063                 goto    l_to_r
+0026   1E05           00064                 btfss   porta, 4
+0027   2836           00065                 goto    rt_yrscore
+0028   282D           00066                 goto    rtlend
+                      00067 
+0029   1E05           00068 rtl_3           btfss   porta, 4
+002A   2859           00069                 goto    score_left
+002B   1D85           00070                 btfss   porta, 3
+002C   2835           00071                 goto    rt_myscore
+                      00072 
+002D   2065           00073 rtlend          call    delay5
+Message[305]: Using default destination of 1 (file).
+002E   0B93           00074                 decfsz  loop_cntr
+002F   281D           00075                 goto    rtl_1
+0030   1003           00076                 bcf     status, 0
+0031   0C92           00077                 rrf     led_posn, 1
+0032   1803           00078                 btfsc   status, 0
+0033   2835           00079                 goto    rt_myscore
+0034   2819           00080                 goto    rtl_0
+                      00081 
+0035   285F           00082 rt_myscore      goto    score_right
+0036   2859           00083 rt_yrscore      goto    score_left
+                      00084                         
+0037   3000           00085 l_to_r          movlw   0
+0038   0085           00086                 movwf   porta
+0039   3001           00087                 movlw   1
+003A   0092           00088                 movwf   led_posn
+003B   3020           00089 ltr_0           movlw   led_durn
+003C   0093           00090                 movwf   loop_cntr
+                      00091 
+003D   0812           00092 ltr_1           movf    led_posn, w
+003E   0086           00093                 movwf   portb
+003F   1C12           00094                 btfss   led_posn, 0
+0040   2844           00095                 goto    ltr_2
+                      00096                         
+0041   1E05           00097                 btfss   porta, 4
+0042   2857           00098                 goto    lft_myscore
+0043   284F           00099                 goto    ltrend
+                      00100 
+0044   1F92           00101 ltr_2           btfss   led_posn, 7
+0045   284B           00102                 goto    ltr_3
+                      00103                         
+0046   1E05           00104                 btfss   porta, 4
+0047   2815           00105                 goto    r_to_l
+MPASM  5.37                      PINGPONG.ASM   11-6-2010  11:33:28         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0048   1D85           00106                 btfss   porta, 3
+0049   2858           00107                 goto    lft_yrscore
+004A   284F           00108                 goto    ltrend
+                      00109 
+004B   1E05           00110 ltr_3           btfss   porta, 4
+004C   2857           00111                 goto    lft_myscore
+004D   1D85           00112                 btfss   porta, 3
+004E   2858           00113                 goto    lft_yrscore
+                      00114         
+004F   2065           00115 ltrend          call    delay5
+Message[305]: Using default destination of 1 (file).
+0050   0B93           00116                 decfsz  loop_cntr
+0051   283D           00117                 goto    ltr_1
+                      00118 
+0052   1003           00119                 bcf     status, 0
+0053   0D92           00120                 rlf     led_posn, 1
+0054   1803           00121                 btfsc   status, 0
+0055   2857           00122                 goto    lft_myscore
+0056   283B           00123                 goto    ltr_0
+                      00124 
+0057   2859           00125 lft_myscore     goto    score_left
+0058   285F           00126 lft_yrscore     goto    score_right
+                      00127 
+0059   3000           00128 score_left      movlw   0
+005A   0086           00129                 movwf   portb
+005B   1485           00130                 bsf     porta, 1
+005C   206C           00131                 call    delay500
+005D   1085           00132                 bcf     porta, 1
+005E   2808           00133                 goto    wait
+                      00134 
+005F   3000           00135 score_right     movlw   0
+0060   0086           00136                 movwf   portb
+0061   1405           00137                 bsf     porta, 0
+0062   206C           00138                 call    delay500
+0063   1005           00139                 bcf     porta, 0
+0064   2808           00140                 goto    wait
+                      00141 
+0065   30C8           00142 delay5          movlw   D'200'
+0066   0090           00143                 movwf   delcntr1
+0067   0000           00144 del1            nop
+0068   0000           00145                 nop
+0069   0B90           00146                 decfsz  delcntr1, 1
+006A   2867           00147                 goto    del1
+006B   0008           00148                 return  
+                      00149 
+006C   3064           00150 delay500        movlw   D'100'
+006D   0091           00151                 movwf   delcntr2
+006E   2065           00152 del2            call    delay5
+006F   0B91           00153                 decfsz  delcntr2, 1
+0070   286E           00154                 goto    del2
+0071   0008           00155                 return
+                      00156                 end
+MPASM  5.37                      PINGPONG.ASM   11-6-2010  11:33:28         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+__16F84A                          00000001
+__DEBUG                           1
+del1                              00000067
+del2                              0000006E
+delay5                            00000065
+delay500                          0000006C
+delcntr1                          00000010
+delcntr2                          00000011
+l_to_r                            00000037
+led_durn                          00000020
+led_posn                          00000012
+lft_myscore                       00000057
+lft_yrscore                       00000058
+loop_cntr                         00000013
+ltr_0                             0000003B
+ltr_1                             0000003D
+ltr_2                             00000044
+ltr_3                             0000004B
+ltrend                            0000004F
+porta                             00000005
+portb                             00000006
+r_to_l                            00000015
+rt_myscore                        00000035
+rt_yrscore                        00000036
+rtl_0                             00000019
+rtl_1                             0000001D
+rtl_2                             00000022
+rtl_3                             00000029
+rtlend                            0000002D
+score_left                        00000059
+score_right                       0000005F
+start                             00000002
+status                            00000003
+trisa                             00000005
+trisb                             00000006
+wait                              00000008
+wait1                             00000010
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : X-XXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XX--------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   113
+Program Memory Words Free:   911
+
+
+MPASM  5.37                      PINGPONG.ASM   11-6-2010  11:33:28         PAGE  5
+
+
+
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+
