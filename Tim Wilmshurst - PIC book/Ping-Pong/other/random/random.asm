@@ -35,3 +35,23 @@ loop            movf    pointer, 0
 
 delay           movlw   D'100'
                 movwf   delcntr2
+outer           movlw   D'200'
+                movwf   delcntr1
+inner           nop
+                nop
+                decfsz  delcntr1, 1
+                goto    inner
+                decfsz  delcntr2, 1
+                goto    outer
+                return
+
+table           addwf   pcl
+                retlw   23
+                retlw   3f
+                retlw   47
+                retlw   7f
+                retlw   0a2
+                retlw   1f
+                retlw   03
+                retlw   67
+                end

@@ -1,0 +1,42 @@
+MPLINK 4.37, Linker
+Linker Map File - Created Mon Nov 08 21:25:33 2010
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x00004a
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000024      
+            37 out of 1093 program addresses used, program memory utilization is 3%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    delay   0x000011    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    inner   0x000015    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                     loop   0x000009    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    outer   0x000013    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    start   0x000000    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    table   0x00001c    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                    start   0x000000    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                     loop   0x000009    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    delay   0x000011    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    outer   0x000013    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    inner   0x000015    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+                    table   0x00001c    program     static C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\other\random\random.asm
+
+
