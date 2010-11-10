@@ -1,4 +1,4 @@
-                list	p=16F84A
+                list	p=16F84
 
 pcl             equ     2
 status          equ     3

@@ -1,81 +1,79 @@
-MPASM  5.37                        RANDOM.ASM   11-8-2010  21:25:32         PAGE  1
+gpasm-0.13.6 beta               random.asm  11-10-2010  19:00:46         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
-
-                      00001                 list    p=16F84A
-                      00002 
-  00000002            00003 pcl             equ     2
-  00000003            00004 status          equ     3
-  00000005            00005 porta           equ     5
-  00000005            00006 trisa           equ     5
-  00000006            00007 portb           equ     6
-  00000006            00008 trisb           equ     6
-                      00009 
-  00000010            00010 pointer         equ     10
-  00000011            00011 delcntr1        equ     11
-  00000012            00012 delcntr2        equ     12
-                      00013 
-                      00014 
-0000                  00015                 org     0
-                      00016 
-0000   1683           00017 start           bsf     status, 5
-0001   3018           00018                 movlw   B'00011000'
-0002   0085           00019                 movwf   trisa
-0003   3000           00020                 movlw   0
-0004   0086           00021                 movwf   trisb
-0005   1283           00022                 bcf     status, 5
-                      00023 
-0006   3000           00024                 movlw   0
-0007   0085           00025                 movwf   porta
-0008   0090           00026                 movwf   pointer
-0009   0810           00027 loop            movf    pointer, 0
-000A   201C           00028                 call    table
-000B   0086           00029                 movwf   portb
-000C   2011           00030                 call    delay
-000D   0A90           00031                 incf    pointer, 1
-000E   1990           00032                 btfsc   pointer, 3
-000F   0190           00033                 clrf    pointer
-0010   2809           00034                 goto    loop
-                      00035 
-0011   3064           00036 delay           movlw   D'100'
-0012   0092           00037                 movwf   delcntr2
-0013   30C8           00038 outer           movlw   D'200'
-0014   0091           00039                 movwf   delcntr1
-0015   0000           00040 inner           nop
-0016   0000           00041                 nop
-0017   0B91           00042                 decfsz  delcntr1, 1
-0018   2815           00043                 goto    inner
-0019   0B92           00044                 decfsz  delcntr2, 1
-001A   2813           00045                 goto    outer
-001B   0008           00046                 return
-                      00047 
-Message[305]: Using default destination of 1 (file).
-001C   0782           00048 table           addwf   pcl
-001D   3423           00049                 retlw   23
-001E   343F           00050                 retlw   3f
-001F   3447           00051                 retlw   47
-0020   347F           00052                 retlw   7f
-MPASM  5.37                        RANDOM.ASM   11-8-2010  21:25:32         PAGE  2
+ 
+               00001                 list    p=16F84
+               00002 
+  00000002     00003 pcl             equ     2
+  00000003     00004 status          equ     3
+  00000005     00005 porta           equ     5
+  00000005     00006 trisa           equ     5
+  00000006     00007 portb           equ     6
+  00000006     00008 trisb           equ     6
+               00009 
+  00000010     00010 pointer         equ     10
+  00000011     00011 delcntr1        equ     11
+  00000012     00012 delcntr2        equ     12
+               00013 
+               00014 
+0000           00015                 org     0
+               00016 
+0000 1683      00017 start           bsf     status, 5
+0001 3018      00018                 movlw   B'00011000'
+0002 0085      00019                 movwf   trisa
+0003 3000      00020                 movlw   0
+0004 0086      00021                 movwf   trisb
+0005 1283      00022                 bcf     status, 5
+               00023 
+0006 3000      00024                 movlw   0
+0007 0085      00025                 movwf   porta
+0008 0090      00026                 movwf   pointer
+0009 0810      00027 loop            movf    pointer, 0
+000A 201C      00028                 call    table
+000B 0086      00029                 movwf   portb
+000C 2011      00030                 call    delay
+000D 0A90      00031                 incf    pointer, 1
+000E 1990      00032                 btfsc   pointer, 3
+000F 0190      00033                 clrf    pointer
+0010 2809      00034                 goto    loop
+               00035 
+0011 3064      00036 delay           movlw   D'100'
+0012 0092      00037                 movwf   delcntr2
+0013 30C8      00038 outer           movlw   D'200'
+0014 0091      00039                 movwf   delcntr1
+0015 0000      00040 inner           nop
+0016 0000      00041                 nop
+0017 0B91      00042                 decfsz  delcntr1, 1
+0018 2815      00043                 goto    inner
+0019 0B92      00044                 decfsz  delcntr2, 1
+001A 2813      00045                 goto    outer
+001B 0008      00046                 return
+               00047 
+Message [305] : Using default destination of 1 (file).
+001C 0782      00048 table           addwf   pcl
+001D 3423      00049                 retlw   23
+001E 343F      00050                 retlw   3f
+001F 3447      00051                 retlw   47
+0020 347F      00052                 retlw   7f
+0021 34A2      00053                 retlw   0a2
+gpasm-0.13.6 beta               random.asm  11-10-2010  19:00:46         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
-
-0021   34A2           00053                 retlw   0a2
-0022   341F           00054                 retlw   1f
-0023   3403           00055                 retlw   03
-0024   3467           00056                 retlw   67
-                      00057                 end
-MPASM  5.37                        RANDOM.ASM   11-8-2010  21:25:32         PAGE  3
+ 
+0022 341F      00054                 retlw   1f
+0023 3403      00055                 retlw   03
+0024 3467      00056                 retlw   67
+gpasm-0.13.6 beta               random.asm  11-10-2010  19:00:46         PAGE  3
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
-__16F84A                          00000001
-__DEBUG                           1
+__16F84                           00000001
 delay                             00000011
 delcntr1                          00000011
 delcntr2                          00000012
@@ -95,16 +93,14 @@ trisb                             00000006
 
 MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
 
-0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXX----------- ----------------
+00000000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXX----------- ----------------
 
 All other memory blocks unused.
 
-Program Memory Words Used:    37
-Program Memory Words Free:   987
+Program Memory Words Used: 37
 
 
-Errors   :     0
-Warnings :     0 reported,     0 suppressed
-Messages :     1 reported,     0 suppressed
-
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       1 reported,       0 suppressed
 
