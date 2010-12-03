@@ -1,0 +1,23 @@
+<Qucs Schematic 0.0.15>
+<Properties>
+  <View=0,0,800,800,1,0,0>
+  <Grid=10,10,0>
+  <DataSet=rc-int.dat>
+  <DataDisplay=rc-int.sch>
+  <OpenDisplay=1>
+  <showFrame=0>
+  <FrameText0=\x041D\x0430\x0437\x0432\x0430\x043D\x0438\x0435>
+  <FrameText1=\x0427\x0435\x0440\x0442\x0438\x043B:>
+  <FrameText2=\x0414\x0430\x0442\x0430:>
+  <FrameText3=\x0412\x0435\x0440\x0441\x0438\x044F:>
+</Properties>
+<Symbol>
+</Symbol>
+<Components>
+</Components>
+<Wires>
+</Wires>
+<Diagrams>
+</Diagrams>
+<Paintings>
+</Paintings>
