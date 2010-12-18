@@ -9,6 +9,33 @@ struct libusb_context* ctx;
 #define GTP_PRODUCT 0x5200
 
 
+const char* gtp_get_version (struct libusb_device_handle* handle)
+{
+    unsigned char data[] = {
+        0x3e, 0x30, 0, 0, 8, 3, 3, 0,
+    };
+    static unsigned char buf[256];
+
+    int r, gone;
+
+    r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_OUT, data, sizeof (data), &gone, 1000);
+    if (r < 0) {
+        printf ("Send error %d\n", r);
+        return NULL;
+    }
+//    printf ("%d bytes sent\n", gone);
+
+    r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_IN, buf, sizeof (buf), &gone, 1000);
+    if (r < 0) {
+        printf ("Receive error %d\n", r);
+        return NULL;
+    }
+//    printf ("%d bytes got\n", gone);
+    buf[gone] = 0;
+    return buf+2;
+}
+
+
 int main (int argc, char *argv[])
 {
     int err;
@@ -26,7 +53,8 @@ int main (int argc, char *argv[])
     if (!handle)
         printf ("GTP-USB device not found\n");
     else {
-        printf ("GTP-USB device found\n");
+        libusb_claim_interface (handle, 0);
+        printf ("GTP-USB device found, version = %s\n", gtp_get_version (handle));
     }
 
     libusb_close (handle);
