@@ -1,0 +1,6 @@
+ACTION !="add", GOTO="gtp_rules_end"
+SYSFS{idVendor} == "04D8", SYSFS{idProduct} == "5200", SYMLINK += "gtp"
+
+MODE="0664", OWNER="root", GROUP="plugdev"
+
+LABEL="gtp_rules_end"
