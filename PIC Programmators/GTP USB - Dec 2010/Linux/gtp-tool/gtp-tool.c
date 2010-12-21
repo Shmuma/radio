@@ -42,9 +42,10 @@ void gtp_read_chip (struct libusb_device_handle* handle)
         0x3e, 0x31, 0xff, 0x03, 0x00, 0x00, 0x04, 0x00,
     };
 
-    static unsigned char buf[512];
+    static unsigned char buf[512*1024];
 
     int r, gone;
+    FILE* f = fopen ("data.dat", "w+");
 
     r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_OUT, read_cmd, sizeof (read_cmd), &gone, 1000);
     if (r < 0) {
@@ -53,14 +54,18 @@ void gtp_read_chip (struct libusb_device_handle* handle)
     }
     printf ("%d bytes sent\n", gone);
 
-    while (1) {    
+    while (1) {
+	gone = 0;    
         r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_IN, buf, sizeof (buf), &gone, 1000);
+        printf ("%d bytes got\n", gone);
+	if (gone > 0)
+	    fwrite (buf, 1, gone, f);
         if (r < 0) {
             printf ("Receive error %d\n", r);
             break;;
         }
-        printf ("%d bytes got\n", gone);
     }
+    fclose (f);
 }
 
 
