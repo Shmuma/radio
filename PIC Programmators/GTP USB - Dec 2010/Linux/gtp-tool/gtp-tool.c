@@ -36,6 +36,34 @@ const char* gtp_get_version (struct libusb_device_handle* handle)
 }
 
 
+void gtp_read_chip (struct libusb_device_handle* handle)
+{
+    unsigned char read_cmd[] = {
+        0x3e, 0x31, 0xff, 0x03, 0x00, 0x00, 0x04, 0x00,
+    };
+
+    static unsigned char buf[512];
+
+    int r, gone;
+
+    r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_OUT, read_cmd, sizeof (read_cmd), &gone, 1000);
+    if (r < 0) {
+        printf ("Send error %d\n", r);
+        return;
+    }
+    printf ("%d bytes sent\n", gone);
+
+    while (1) {    
+        r = libusb_interrupt_transfer (handle, 1 | LIBUSB_ENDPOINT_IN, buf, sizeof (buf), &gone, 1000);
+        if (r < 0) {
+            printf ("Receive error %d\n", r);
+            break;;
+        }
+        printf ("%d bytes got\n", gone);
+    }
+}
+
+
 int main (int argc, char *argv[])
 {
     int err;
@@ -55,6 +83,9 @@ int main (int argc, char *argv[])
     else {
         libusb_claim_interface (handle, 0);
         printf ("GTP-USB device found, version = %s\n", gtp_get_version (handle));
+
+        /* try to read chip contents */
+        gtp_read_chip (handle);
     }
 
     libusb_close (handle);
