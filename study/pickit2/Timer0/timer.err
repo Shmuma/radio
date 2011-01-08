@@ -1,3 +1,7 @@
-Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 10 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 20 : Register in operand not in bank 0.  Ensure that bank bits are correct.
-Message[305] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 26 : Using default destination of 1 (file).
+Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 14 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 18 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 21 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 22 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 23 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 29 : Using default destination of 1 (file).
+Message[305] C:\USERS\SHMUMA\WORK\RADIO\STUDY\PICKIT2\TIMER0\TIMER.ASM 35 : Using default destination of 1 (file).

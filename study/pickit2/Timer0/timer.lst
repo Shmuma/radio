@@ -1,4 +1,4 @@
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  1
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -9,37 +9,50 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00002 ; P16F887.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
                       00617         LIST
                       00002 
-2007   00E4           00003         __CONFIG        _CONFIG1, _DEBUG_ON & _LVP_OFF & _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF & 
-                            _CP_OFF & _MCLRE_ON & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT
+2007   20E4           00003         __CONFIG        _CONFIG1, _DEBUG_OFF & _LVP_OFF & _FCMEN_OFF & _IESO_OFF & _BOR_OFF & _CPD_OFF &
+                             _CP_OFF & _MCLRE_ON & _PWRTE_ON & _WDT_OFF & _INTRC_OSC_NOCLKOUT
 2008   3EFF           00004         __CONFIG        _CONFIG2, _WRT_OFF & _BOR21V
                       00005 
                       00006 
 0000                  00007         org     0
                       00008 
-0000   1683 1303      00009         banksel TRISD
+                      00009         ;; bank 1
+0000   1683           00010         bsf     STATUS, RP0
+0001   1303           00011         bcf     STATUS, RP1
+                      00012 
+                      00013         ;; output on D port
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0002   0188           00010         clrf    TRISD
-0003   1283 1303      00011         banksel PORTD
-0005   0188           00012         clrf    PORTD
-0006   30FF           00013         movlw   b'11111111'
-0007   0088           00014         movwf   PORTD
+0002   0188           00014         clrf    TRISD
                       00015 
-0008   1283 1303      00016         banksel TMR0
-000A   0181           00017         clrf    TMR0
-000B   1683 1303      00018         banksel OPTION_REG
-000D   3007           00019         movlw   B'00000111'
+                      00016         ;; timer 0 prescaler 1:256
+0003   3007           00017         movlw   B'00000111'
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-000E   0081           00020         movwf   OPTION_REG
-                      00021         
-000F                  00022 loop:
-000F   1D0B           00023         btfss   INTCON, T0IF
-0010   280F           00024         goto    loop
-0011   110B           00025         bcf     INTCON, T0IF
+0004   0081           00018         movwf   OPTION_REG
+                      00019 
+                      00020         ;; switch to 31 KHz
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0005   120F           00021         bcf     OSCCON, IRCF0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0006   128F           00022         bcf     OSCCON, IRCF1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   170F           00023         bsf     OSCCON, IRCF2
+                      00024 
+                      00025         ;; bank 0
+0008   1283           00026         bcf     STATUS, RP0
+                      00027 
+0009   0188           00028         clrf    PORTD
 Message[305]: Using default destination of 1 (file).
-0012   0A88           00026         incf    PORTD
-0013   280F           00027         goto    loop
-                      00028         end
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  2
+000A   0388           00029         decf    PORTD
+                      00030 
+000B                  00031 loop:
+000B   1D0B           00032         btfss   INTCON, T0IF
+000C   280B           00033         goto    loop
+000D   110B           00034         bcf     INTCON, T0IF
+Message[305]: Using default destination of 1 (file).
+000E   0A88           00035         incf    PORTD
+000F   280B           00036         goto    loop
+                      00037         end
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  2
 
 
 SYMBOL TABLE
@@ -98,7 +111,7 @@ BRG6                              00000006
 BRG7                              00000007
 BRG8                              00000000
 BRG9                              00000001
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  3
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  3
 
 
 SYMBOL TABLE
@@ -157,7 +170,7 @@ CHS2                              00000004
 CHS3                              00000005
 CKE                               00000006
 CKP                               00000004
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  4
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  4
 
 
 SYMBOL TABLE
@@ -216,7 +229,7 @@ IOCB2                             00000002
 IOCB3                             00000003
 IOCB4                             00000004
 IOCB5                             00000005
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  5
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  5
 
 
 SYMBOL TABLE
@@ -275,7 +288,7 @@ PIR2                              0000000D
 PORTA                             00000005
 PORTB                             00000006
 PORTC                             00000007
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  6
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  6
 
 
 SYMBOL TABLE
@@ -334,7 +347,7 @@ SREN                              00000005
 SSPADD                            00000093
 SSPBUF                            00000013
 SSPCON                            00000014
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  7
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  7
 
 
 SYMBOL TABLE
@@ -393,7 +406,7 @@ TOUTPS1                           00000004
 TOUTPS2                           00000005
 TOUTPS3                           00000006
 TRISA                             00000085
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  8
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  8
 
 
 SYMBOL TABLE
@@ -452,7 +465,7 @@ WPUB7                             00000007
 WR                                00000001
 WREN                              00000002
 WRERR                             00000003
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE  9
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE  9
 
 
 SYMBOL TABLE
@@ -504,25 +517,24 @@ _WRT_OFF                          00003FFF
 _XT_OSC                           00003FF9
 __16F887                          00000001
 __DEBUG                           1
-__MPLAB_DEBUGGER_PICKIT2          1
-loop                              0000000F
-MPASM  5.37                         TIMER.ASM   1-8-2011  21:02:47         PAGE 10
+loop                              0000000B
+MPASM  5.37                         TIMER.ASM   1-8-2011  21:30:22         PAGE 10
 
 
 MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
 
 
-0000 : XXXXXXXXXXXXXXXX XXXX------------ ---------------- ----------------
+0000 : XXXXXXXXXXXXXXXX ---------------- ---------------- ----------------
 2000 : -------XX------- ---------------- ---------------- ----------------
 
 All other memory blocks unused.
 
-Program Memory Words Used:    20
-Program Memory Words Free:  8172
+Program Memory Words Used:    16
+Program Memory Words Free:  8176
 
 
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
-Messages :     3 reported,     0 suppressed
+Messages :     7 reported,     0 suppressed
 
 

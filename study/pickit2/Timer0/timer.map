@@ -1,11 +1,11 @@
 MPLINK 4.37, Linker
-Linker Map File - Created Sat Jan 08 21:02:47 2011
+Linker Map File - Created Sat Jan 08 21:30:23 2011
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000000
-                   .org_1       code   0x000000    program   0x000028
+                   .org_1       code   0x000000    program   0x000020
      .config_2007_TIMER.O       code   0x002007    program   0x000002
      .config_2008_TIMER.O       code   0x002008    program   0x000002
 
@@ -14,22 +14,22 @@ Linker Map File - Created Sat Jan 08 21:02:47 2011
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000013      
+                            0x000000    0x00000f      
                             0x002007    0x002008      
-            22 out of 8454 program addresses used, program memory utilization is 0%
+            18 out of 8454 program addresses used, program memory utilization is 0%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                     loop   0x00000f    program     static C:\Users\Shmuma\Work\radio\study\pickit2\Timer0\timer.asm
+                     loop   0x00000b    program     static C:\Users\Shmuma\Work\radio\study\pickit2\Timer0\timer.asm
 
 
 
                               Symbols - Sorted by Address
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                     loop   0x00000f    program     static C:\Users\Shmuma\Work\radio\study\pickit2\Timer0\timer.asm
+                     loop   0x00000b    program     static C:\Users\Shmuma\Work\radio\study\pickit2\Timer0\timer.asm
 
 
