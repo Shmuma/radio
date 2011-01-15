@@ -5,6 +5,7 @@
 
 ;;; 12 MH external clock
 CONFIG  FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
+CONFIG  PBADEN=OFF
 CONFIG  DEBUG=OFF
 
 cblock  20
@@ -31,6 +32,12 @@ DB7     equ     RB4
         clrf    TRISA
         clrf    TRISB
 
+        ;; switch ports to digital
+        bsf     ADCON1, 0
+        bsf     ADCON1, 1
+        bsf     ADCON1, 2
+        bsf     ADCON1, 3
+        
         clrf    PORTA
         clrf    PORTB
         
