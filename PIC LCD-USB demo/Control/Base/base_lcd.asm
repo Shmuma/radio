@@ -16,38 +16,34 @@ endc
 
         ;; output on A and B ports
         clrf    TRISA
-        clrf    TRISB
 
-        ;; bcf     OSCCON, IRCF0
-        ;; bcf     OSCCON, IRCF1
-        ;; bcf     OSCCON, IRCF2
-        
-        ;; Clear screen command
-        bsf     PORTA, 0
-        ;; E bit
-        bsf     PORTB, RB2
 Loop:   
-        
-        bsf     PORTB, RB7
-        bcf     PORTB, RB6
-
-;;;         call    DoDelay
-        bcf     PORTB, 2
-        bcf     PORTB, RB7
-        bsf     PORTB, RB6
-;;;         call    DoDelay
+        ;; calibrate delay loop
+        bsf     PORTA, RA0
+        movlw   10
+        call    Delay2us
+        bcf     PORTA, RA0
+        movlw   20
+        call    Delay2us
         goto    Loop
 
-DoDelay:        
-        clrf    Delay1
-        clrf    Delay2
-Delay:
+        ;; Delay subroutine. W reg must hold amount of 250 us delays
+Delay250us:
+        movwf   Delay2
+DelayLoop:
         decfsz  Delay1, f
-        goto    Delay
+        goto    DelayLoop
         decfsz  Delay2, f
-        goto    Delay
+        goto    DelayLoop
         return
-        
+
+        ;; W reg must hold amount of 2 us delays
+Delay2us:
+        movwf   Delay1
+Delay1Loop:     
+        decfsz  Delay1, f
+        goto    Delay1Loop
+        return
         end
 
         
