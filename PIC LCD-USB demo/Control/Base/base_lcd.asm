@@ -4,14 +4,14 @@
 ;;;         CONFIG        _CONFIG2, _WRT_OFF & _BOR21V
 
 ;;; 12 MH external clock
-CONFIG  FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
-CONFIG  PBADEN=OFF
-CONFIG  DEBUG=OFF
+        CONFIG  FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
+        CONFIG  DEBUG=OFF
 
-cblock  20
+        cblock  20
         Delay1
         Delay2
-endc
+        WriteLcdVal
+        endc
 
 ;;; LCD demo board constants
 RS      equ     RB0
@@ -48,9 +48,6 @@ DB7     equ     RB4
 ;;;     bcf     PORTB, E
 
         ;; wait for init completed
-        movlw   1
-        call    Delay250us
-
         call    InitLCD
         
 ClearLoop:
@@ -105,9 +102,8 @@ ClearLCD:
 
 ;;; Initializes LCD function
 InitLCD:
-        movf    PORTB, WREG
-        bsf     WREG, E
-        movwf   PORTB
+        bsf     PORTB, E
+
         movlw   1
         call    Delay250us
 
@@ -130,6 +126,58 @@ InitLCD:
         movlw   1
         call    Delay250us
         
+        return
+
+WaitForBusyFlag:
+        bsf     TRISA, DB7      ; switch it to input
+        bcf     PORTB, RS
+        bsf     PORTB, RW
+
+        movlw   25
+        call    Delay2us
+
+WaitLoop:
+        bsf     PORTB, E
+
+        movlw   1
+        call    Delay250us
+
+        bcf     PORTB, E
+
+        btfss   PORTB, DB7
+        goto    WaitDone
+
+        movlw   1
+        call    Delay250us
+        goto    WaitLoop
+        
+WaitDone:       
+        movlw   1
+        call    Delay250us
+        
+        bcf     TRISA, DB7
+        bcf     PORTB, RW
+        return
+
+;;; write byte from WReg to LCD
+WriteLCD:
+        movwf   WriteLcdVal
+        bcf     PORTB, RS
+        bcf     PORTB, RW
+        nop
+        bsf     PORTB, E
+        movf    WriteLcdVal, 0
+        movwf   PORTA
+        bcf     PORTB, DB6
+        bcf     PORTB, DB7
+        btfsc   WriteLcdVal, 6
+        bsf     PORTB, DB6
+        btfsc   WriteLcdVal, 7
+        bsf     PORTB, DB7
+
+        bcf     PORTB, E
+        nop
+        return
         return
         end
         
