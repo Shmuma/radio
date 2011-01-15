@@ -1,4 +1,4 @@
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  1
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -32,47 +32,134 @@ Warning[205]: Found directive in column 1. (cblock)
   00000021            00012         Delay2
 Warning[205]: Found directive in column 1. (ENDC)
                       00013 endc
-                      00014         
-000000                00015         org     0
-                      00016 
-                      00017         ;; output on A and B ports
-000000 6A92           00018         clrf    TRISA
-                      00019 
-000002                00020 Loop:   
-                      00021         ;; calibrate delay loop
-000002 8080           00022         bsf     PORTA, RA0
-000004 0E10           00023         movlw   10
-000006 EC13 F000      00024         call    Delay1us
-00000A 9080           00025         bcf     PORTA, RA0
-00000C 0E20           00026         movlw   20
-00000E EC13 F000      00027         call    Delay1us
-000012 EF01 F000      00028         goto    Loop
+                      00014 
+                      00015 ;;; LCD demo board constants
+  00000000            00016 RS      equ     RB0
+  00000001            00017 RW      equ     RB1
+  00000002            00018 E       equ     RB2
+  00000000            00019 DB0     equ     RA0
+  00000001            00020 DB1     equ     RA1
+  00000002            00021 DB2     equ     RA2
+  00000003            00022 DB3     equ     RA3
+  00000004            00023 DB4     equ     RA4
+  00000005            00024 DB5     equ     RA5
+  00000003            00025 DB6     equ     RB3             ; Note that B reg used
+  00000004            00026 DB7     equ     RB4
+                      00027         
+000000                00028         org     0
                       00029 
-                      00030         ;; Delay subroutine. W reg must hold amount of 250 us delays
-000016                00031 Delay250us:
-000016 6E21           00032         movwf   Delay2
-000018                00033 DelayLoop:
-000018 2E20           00034         decfsz  Delay1, f
-00001A EF0C F000      00035         goto    DelayLoop
-00001E 2E21           00036         decfsz  Delay2, f
-000020 EF0C F000      00037         goto    DelayLoop
-000024 0012           00038         return
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  2
+                      00030         ;; output on A and B ports
+000000 6A92           00031         clrf    TRISA
+000002 6A93           00032         clrf    TRISB
+                      00033 
+000004 6A80           00034         clrf    PORTA
+000006 6A81           00035         clrf    PORTB
+                      00036         
+                      00037         ;; R/W -> 0, RS -> 0
+                      00038 ;;;     bcf     PORTB, RS
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00039 
-                      00040         ;; W reg must hold amount of 1 us delays
-000026                00041 Delay1us:
-000026 6E20           00042         movwf   Delay1
-000028                00043 Delay1Loop:     
-000028 2E20           00044         decfsz  Delay1, f
-00002A EF14 F000      00045         goto    Delay1Loop
-00002E 0012           00046         return
-                      00047         end
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  3
+                      00039 ;;;     bcf     PORTB, RW
+                      00040 
+                      00041 ;;;     bcf     PORTB, E
+                      00042 
+                      00043         ;; wait for init completed
+000008 0E01           00044         movlw   1
+00000A EC0D F000      00045         call    Delay250us
+                      00046 
+00000E EC2E F000      00047         call    InitLCD
+                      00048         
+000012                00049 ClearLoop:
+000012 EC1A F000      00050         call    ClearLCD
+000016 EF09 F000      00051         goto    ClearLoop
+                      00052 
+                      00053 ;;; Delay subroutine. W reg must hold amount of 250 us delays
+00001A                00054 Delay250us:
+00001A 6E21           00055         movwf   Delay2
+00001C                00056 Delay250Loop:
+00001C 2E20           00057         decfsz  Delay1, f
+00001E EF0E F000      00058         goto    Delay250Loop
+000022 2E21           00059         decfsz  Delay2, f
+000024 EF0E F000      00060         goto    Delay250Loop
+000028 0012           00061         return
+                      00062 
+                      00063 ;;; W reg must hold amount of 2 us delays
+00002A                00064 Delay2us:
+00002A 6E20           00065         movwf   Delay1
+00002C                00066 Delay2Loop:     
+00002C 2E20           00067         decfsz  Delay1, f
+00002E EF16 F000      00068         goto    Delay2Loop
+000032 0012           00069         return
+                      00070 
+                      00071 ;;; Routine clears LCD
+000034                00072 ClearLCD:
+000034 0E01           00073         movlw   1
+000036 EC0D F000      00074         call    Delay250us
+                      00075         
+                      00076         ;; RS = 0, RW = 0, DB1-DB7 = 0, DB0 = 1
+00003A 8481           00077         bsf     PORTB, E
+                      00078 
+00003C 0E01           00079         movlw   1
+00003E EC0D F000      00080         call    Delay250us
+                      00081         
+000042 8080           00082         bsf     PORTA, DB0
+                      00083 
+000044 0E01           00084         movlw   1
+000046 EC0D F000      00085         call    Delay250us
+                      00086 
+00004A 9481           00087         bcf     PORTB, E
+                      00088         
+00004C 0E01           00089         movlw   1
+00004E EC0D F000      00090         call    Delay250us
+                      00091 
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+000052 6A80           00092         clrf    PORTA
+                      00093 
+000054 0E01           00094         movlw   1
+000056 EC0D F000      00095         call    Delay250us
+00005A 0012           00096         return
+                      00097 
+                      00098 
+                      00099 ;;; Initializes LCD function
+00005C                00100 InitLCD:
+Warning[202]: Argument out of range.  Least significant bits used.
+00005C 5081           00101         movf    PORTB, WREG
+00005E 84E8           00102         bsf     WREG, E
+000060 6E81           00103         movwf   PORTB
+000062 0E01           00104         movlw   1
+000064 EC0D F000      00105         call    Delay250us
+                      00106 
+000068 8A80           00107         bsf     PORTA, DB5      ; function set
+00006A 8880           00108         bsf     PORTA, DB4      ; 8-bit mode
+00006C 8680           00109         bsf     PORTA, DB3      ; 2 line display
+00006E 9480           00110         bcf     PORTA, DB2      ; 8x5 dot matrix
+                      00111 
+000070 0E01           00112         movlw   1
+000072 EC0D F000      00113         call    Delay250us
+                      00114 
+000076 9481           00115         bcf     PORTB, E
+                      00116 
+000078 0E01           00117         movlw   1
+00007A EC0D F000      00118         call    Delay250us
+                      00119 
+00007E 6A80           00120         clrf    PORTA
+000080 6A81           00121         clrf    PORTB
+                      00122 
+000082 0E01           00123         movlw   1
+000084 EC0D F000      00124         call    Delay250us
+                      00125         
+000088 0012           00126         return
+                      00127         end
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  4
 
 
 SYMBOL TABLE
@@ -131,7 +218,7 @@ BRGH                              00000002
 BSR                               00000FE0
 BTOEE                             00000004
 BTOEF                             00000004
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  4
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  5
 
 
 SYMBOL TABLE
@@ -190,7 +277,7 @@ CRC16EF                           00000002
 CRC5EE                            00000001
 CRC5EF                            00000001
 CREN                              00000004
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  5
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  6
 
 
 SYMBOL TABLE
@@ -207,8 +294,18 @@ CVREN                             00000007
 CVROE                             00000006
 CVRR                              00000005
 CVRSS                             00000004
+ClearLCD                          00000034
+ClearLoop                         00000012
 D                                 00000005
 DATA_ADDRESS                      00000005
+DB0                               00000000
+DB1                               00000001
+DB2                               00000002
+DB3                               00000003
+DB4                               00000004
+DB5                               00000005
+DB6                               00000003
+DB7                               00000004
 DC                                00000001
 DC1B0                             00000004
 DC1B1                             00000005
@@ -225,11 +322,12 @@ DIR                               00000002
 DONE                              00000001
 D_A                               00000005
 Delay1                            00000020
-Delay1Loop                        00000028
-Delay1us                          00000026
 Delay2                            00000021
-Delay250us                        00000016
-DelayLoop                         00000018
+Delay250Loop                      0000001C
+Delay250us                        0000001A
+Delay2Loop                        0000002C
+Delay2us                          0000002A
+E                                 00000002
 ECCP1AS                           00000FB6
 ECCP1DEL                          00000FB7
 ECCPAS0                           00000004
@@ -238,6 +336,12 @@ ECCPAS2                           00000006
 ECCPASE                           00000007
 EEADR                             00000FA9
 EECON1                            00000FA6
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 EECON2                            00000FA7
 EEDATA                            00000FA8
 EEIE                              00000004
@@ -249,12 +353,6 @@ ENDP1                             00000004
 ENDP2                             00000005
 ENDP3                             00000006
 EPCONDIS                          00000003
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  6
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 EPHSHK                            00000004
 EPINEN                            00000001
 EPOUTEN                           00000002
@@ -297,6 +395,12 @@ HLVDIF                            00000002
 HLVDIN                            00000005
 HLVDIP                            00000002
 HLVDL0                            00000000
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 HLVDL1                            00000001
 HLVDL2                            00000002
 HLVDL3                            00000003
@@ -308,12 +412,6 @@ IDLEIE                            00000004
 IDLEIF                            00000004
 IDLEN                             00000007
 INDF0                             00000FEF
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  7
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 INDF1                             00000FE7
 INDF2                             00000FDF
 INT0                              00000000
@@ -351,10 +449,17 @@ IRCF1                             00000005
 IRCF2                             00000006
 IRVST                             00000005
 IVRST                             00000005
+InitLCD                           0000005C
 LATA                              00000F89
 LATA0                             00000000
 LATA1                             00000001
 LATA2                             00000002
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 LATA3                             00000003
 LATA4                             00000004
 LATA5                             00000005
@@ -367,12 +472,6 @@ LATB3                             00000003
 LATB4                             00000004
 LATB5                             00000005
 LATB6                             00000006
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  8
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 LATB7                             00000007
 LATC                              00000F8B
 LATC0                             00000000
@@ -394,7 +493,6 @@ LVV0                              00000000
 LVV1                              00000001
 LVV2                              00000002
 LVV3                              00000003
-Loop                              00000002
 N                                 00000004
 NOT_A                             00000005
 NOT_ADDRESS                       00000005
@@ -415,6 +513,12 @@ OSC2                              00000006
 OSCCON                            00000FD3
 OSCFIE                            00000007
 OSCFIF                            00000007
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 OSCFIP                            00000007
 OSCTUNE                           00000F9B
 OSTS                              00000003
@@ -426,12 +530,6 @@ PCFG0                             00000000
 PCFG1                             00000001
 PCFG2                             00000002
 PCFG3                             00000003
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE  9
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 PCL                               00000FF9
 PCLATH                            00000FFA
 PCLATU                            00000FFB
@@ -474,6 +572,12 @@ PROD                              00000FF3
 PRODH                             00000FF4
 PRODL                             00000FF3
 PRSEN                             00000007
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 PSA                               00000003
 PSSAC0                            00000002
 PSSAC1                            00000003
@@ -485,12 +589,6 @@ RA3                               00000003
 RA4                               00000004
 RA5                               00000005
 RA6                               00000006
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 10
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 RB0                               00000000
 RB1                               00000001
 RB2                               00000002
@@ -525,12 +623,20 @@ RE3                               00000003
 READ_WRITE                        00000002
 RESUME                            00000002
 RI                                00000004
+RS                                00000000
 RSEN                              00000001
+RW                                00000001
 RX                                00000007
 RX9                               00000006
 RX9D                              00000000
 RXDTP                             00000005
 R_W                               00000002
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 S                                 00000003
 SBOREN                            00000006
 SCKP                              00000004
@@ -544,12 +650,6 @@ SOFIE                             00000006
 SOFIF                             00000006
 SPBRG                             00000FAF
 SPBRGH                            00000FB0
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 11
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 SPEN                              00000007
 SREN                              00000005
 SSPADD                            00000FC8
@@ -590,6 +690,12 @@ T0IF                              00000002
 T0IP                              00000002
 T0PS0                             00000000
 T0PS1                             00000001
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 T0PS2                             00000002
 T0SE                              00000004
 T13CKI                            00000000
@@ -603,12 +709,6 @@ T1RUN                             00000006
 T1SYNC                            00000002
 T2CKPS0                           00000000
 T2CKPS1                           00000001
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 12
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 T2CON                             00000FCA
 T2OUTPS0                          00000003
 T2OUTPS1                          00000004
@@ -649,6 +749,12 @@ TMR3H                             00000FB3
 TMR3IE                            00000001
 TMR3IF                            00000001
 TMR3IP                            00000001
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 TMR3L                             00000FB2
 TMR3ON                            00000000
 TO                                00000003
@@ -662,12 +768,6 @@ TRISA1                            00000001
 TRISA2                            00000002
 TRISA3                            00000003
 TRISA4                            00000004
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 13
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 TRISA5                            00000005
 TRISA6                            00000006
 TRISB                             00000F93
@@ -708,6 +808,12 @@ UADDR                             00000F6E
 UCFG                              00000F6F
 UCON                              00000F6D
 UEIE                              00000F6B
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 UEIR                              00000F6A
 UEP0                              00000F70
 UEP1                              00000F71
@@ -721,12 +827,6 @@ UEP2                              00000F72
 UEP3                              00000F73
 UEP4                              00000F74
 UEP5                              00000F75
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 14
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 UEP6                              00000F76
 UEP7                              00000F77
 UEP8                              00000F78
@@ -767,6 +867,12 @@ _BORV_0_2L                        000000E7
 _BORV_1_2L                        000000EF
 _BORV_2_2L                        000000F7
 _BORV_3_2L                        000000FF
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _BOR_OFF_2L                       000000F9
 _BOR_ON_2L                        000000FF
 _BOR_ON_ACTIVE_2L                 000000FD
@@ -780,12 +886,6 @@ _CONFIG2L                         00300002
 _CONFIG3H                         00300005
 _CONFIG4L                         00300006
 _CONFIG5H                         00300009
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 15
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _CONFIG5L                         00300008
 _CONFIG6H                         0030000B
 _CONFIG6L                         0030000A
@@ -826,6 +926,12 @@ _FCMEN_ON_1H                      000000FF
 _FOSC_ECIO_EC_1H                  000000F4
 _FOSC_ECPLLIO_EC_1H               000000F6
 _FOSC_ECPLL_EC_1H                 000000F7
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 17
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _FOSC_EC_EC_1H                    000000F5
 _FOSC_HSPLL_HS_1H                 000000FE
 _FOSC_HS_1H                       000000FC
@@ -839,12 +945,6 @@ _IDLOC0                           00200000
 _IDLOC1                           00200001
 _IDLOC2                           00200002
 _IDLOC3                           00200003
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 16
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _IDLOC4                           00200004
 _IDLOC5                           00200005
 _IDLOC6                           00200006
@@ -885,6 +985,12 @@ _WDTPS_256_2H                     000000F1
 _WDTPS_2_2H                       000000E3
 _WDTPS_32768_2H                   000000FF
 _WDTPS_32_2H                      000000EB
+MPASM  5.37                      BASE_LCD.ASM   1-15-2011  17:57:48         PAGE 18
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _WDTPS_4096_2H                    000000F9
 _WDTPS_4_2H                       000000E5
 _WDTPS_512_2H                     000000F3
@@ -898,12 +1004,6 @@ _WRT0_ON_6L                       000000FE
 _WRT1_OFF_6L                      000000FF
 _WRT1_ON_6L                       000000FD
 _WRT2_OFF_6L                      000000FF
-MPASM  5.37                      BASE_LCD.ASM   1-15-2011  10:31:07         PAGE 17
-
-
-SYMBOL TABLE
-  LABEL                             VALUE 
-
 _WRT2_ON_6L                       000000FB
 _WRT3_OFF_6L                      000000FF
 _WRT3_ON_6L                       000000F7
@@ -921,17 +1021,19 @@ __DEBUG                           1
 
 MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
 
-0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX ----------------
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXX------ ---------------- ---------------- ----------------
 0000 : XXXX-XX-XXXXXX-- ---------------- ---------------- ----------------
 
 All other memory blocks unused.
 
-Program Memory Bytes Used:    60
-Program Memory Bytes Free: 32708
+Program Memory Bytes Used:   150
+Program Memory Bytes Free: 32618
 
 
 Errors   :     0
-Warnings :     4 reported,     0 suppressed
+Warnings :     5 reported,     0 suppressed
 Messages :     0 reported,     0 suppressed
 
 
