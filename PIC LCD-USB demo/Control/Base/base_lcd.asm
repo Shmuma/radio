@@ -10,7 +10,6 @@
         cblock  20
         Delay1
         Delay2
-        WriteLcdVal
         endc
 
 ;;; LCD demo board constants
@@ -40,19 +39,17 @@ DB7     equ     RB4
         
         clrf    PORTA
         clrf    PORTB
-        
-        ;; R/W -> 0, RS -> 0
-;;;     bcf     PORTB, RS
-;;;     bcf     PORTB, RW
 
-;;;     bcf     PORTB, E
-
-        ;; wait for init completed
         call    InitLCD
+
+        movlw   1
+        call    WriteLCD
         
-ClearLoop:
-        call    ClearLCD
-        goto    ClearLoop
+WriteLoop:
+        call    WaitForBusyFlag
+        movlw   B'00100100'
+        call    WriteLCDChar
+        goto    WriteLoop
 
 ;;; Delay subroutine. W reg must hold amount of 250 us delays
 Delay250us:
@@ -102,30 +99,21 @@ ClearLCD:
 
 ;;; Initializes LCD function
 InitLCD:
-        bsf     PORTB, E
-
-        movlw   1
-        call    Delay250us
-
-        bsf     PORTA, DB5      ; function set
-        bsf     PORTA, DB4      ; 8-bit mode
-        bsf     PORTA, DB3      ; 2 line display
-        bcf     PORTA, DB2      ; 8x5 dot matrix
-
-        movlw   1
-        call    Delay250us
-
-        bcf     PORTB, E
-
-        movlw   1
-        call    Delay250us
-
-        clrf    PORTA
-        clrf    PORTB
-
-        movlw   1
-        call    Delay250us
-        
+        movlw   10
+        call    Delay2us
+        movlw   30
+        call    WriteLCD
+        movlw   10
+        call    Delay2us
+        movlw   30
+        call    WriteLCD
+        movlw   10
+        call    Delay2us
+        movlw   30
+        call    WriteLCD
+        call    WaitForBusyFlag
+        movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
+        call    WriteLCD
         return
 
 WaitForBusyFlag:
@@ -133,51 +121,63 @@ WaitForBusyFlag:
         bcf     PORTB, RS
         bsf     PORTB, RW
 
-        movlw   25
-        call    Delay2us
-
 WaitLoop:
+        nop
         bsf     PORTB, E
-
-        movlw   1
-        call    Delay250us
+        nop
 
         bcf     PORTB, E
 
-        btfss   PORTB, DB7
-        goto    WaitDone
-
-        movlw   1
-        call    Delay250us
+        btfsc   PORTB, DB7
         goto    WaitLoop
-        
-WaitDone:       
-        movlw   1
-        call    Delay250us
-        
+
         bcf     TRISA, DB7
         bcf     PORTB, RW
         return
 
 ;;; write byte from WReg to LCD
 WriteLCD:
-        movwf   WriteLcdVal
         bcf     PORTB, RS
         bcf     PORTB, RW
         nop
+        nop
+        nop
+        nop
         bsf     PORTB, E
-        movf    WriteLcdVal, 0
         movwf   PORTA
         bcf     PORTB, DB6
         bcf     PORTB, DB7
-        btfsc   WriteLcdVal, 6
+        btfsc   WREG, 6
         bsf     PORTB, DB6
-        btfsc   WriteLcdVal, 7
+        btfsc   WREG, 7
         bsf     PORTB, DB7
-
-        bcf     PORTB, E
         nop
+        nop
+        nop
+        nop
+        bcf     PORTB, E
         return
+
+WriteLCDChar:
+        bsf     PORTB, RS
+        bcf     PORTB, RW
+        nop
+        nop
+        nop
+        nop
+        bsf     PORTB, E
+        movwf   PORTA
+        bcf     PORTB, DB6
+        bcf     PORTB, DB7
+        btfsc   WREG, 6
+        bsf     PORTB, DB6
+        btfsc   WREG, 7
+        bsf     PORTB, DB7
+        nop
+        nop
+        nop
+        nop
+        bcf     PORTB, E
+        bcf     PORTB, RS
         return
         end
-        
