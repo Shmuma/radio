@@ -1,11 +1,11 @@
 MPLINK 4.37, Linker
-Linker Map File - Created Sun Jan 16 01:40:12 2011
+Linker Map File - Created Sun Jan 16 18:51:16 2011
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                    .org_0       code   0x000000    program   0x000000
-                   .org_1       code   0x000000    program   0x000106
+                   .org_1       code   0x000000    program   0x000136
 .config_300000_BASE_LCD.O    romdata   0x300000    program   0x000001
 .config_300001_BASE_LCD.O    romdata   0x300001    program   0x000001
 .config_300002_BASE_LCD.O    romdata   0x300002    program   0x000001
@@ -24,44 +24,46 @@ Linker Map File - Created Sun Jan 16 01:40:12 2011
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x000105      
+                            0x000000    0x000135      
                             0x300000    0x300003      
                             0x300005    0x300006      
                             0x300008    0x30000d      
-            274 out of 33048 program addresses used, program memory utilization is 0%
+            322 out of 33048 program addresses used, program memory utilization is 0%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                 ClearLCD   0x000042    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-             Delay250Loop   0x00002a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-               Delay250us   0x000028    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-               Delay2Loop   0x00003a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 Delay2us   0x000038    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                  InitLCD   0x00006a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-          WaitForBusyFlag   0x00009a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 WaitLoop   0x0000a0    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 WriteLCD   0x0000b4    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-             WriteLCDChar   0x0000dc    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                WriteLoop   0x00001a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 ClearLCD   0x00007e    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             Delay250Loop   0x000066    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+               Delay250us   0x000064    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+               Delay2Loop   0x000076    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 Delay2us   0x000074    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                  InitLCD   0x0000a6    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+          WaitForBusyFlag   0x0000e4    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 WaitLoop   0x0000ea    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 WriteLCD   0x0000fe    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             WriteLCDByte   0x00010e    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             WriteLCDChar   0x000106    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                WriteLoop   0x000024    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
 
 
 
                               Symbols - Sorted by Address
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                WriteLoop   0x00001a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-               Delay250us   0x000028    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-             Delay250Loop   0x00002a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 Delay2us   0x000038    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-               Delay2Loop   0x00003a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 ClearLCD   0x000042    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                  InitLCD   0x00006a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-          WaitForBusyFlag   0x00009a    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 WaitLoop   0x0000a0    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-                 WriteLCD   0x0000b4    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
-             WriteLCDChar   0x0000dc    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                WriteLoop   0x000024    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+               Delay250us   0x000064    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             Delay250Loop   0x000066    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 Delay2us   0x000074    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+               Delay2Loop   0x000076    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 ClearLCD   0x00007e    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                  InitLCD   0x0000a6    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+          WaitForBusyFlag   0x0000e4    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 WaitLoop   0x0000ea    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+                 WriteLCD   0x0000fe    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             WriteLCDChar   0x000106    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
+             WriteLCDByte   0x00010e    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\Base\base_lcd.asm
 
 

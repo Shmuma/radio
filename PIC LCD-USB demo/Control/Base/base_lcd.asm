@@ -41,15 +41,33 @@ DB7     equ     RB4
         clrf    PORTB
 
         call    InitLCD
-
-        movlw   1
-        call    WriteLCD
-        
-WriteLoop:
         call    WaitForBusyFlag
-        movlw   B'00100100'
+        movlw   B'110'
+        call    WriteLCD
+        movlw   200
+        call    Delay250us
+WriteLoop:
+        movlw   0xC8
         call    WriteLCDChar
-        goto    WriteLoop
+        movlw   0xA0
+        call    WriteLCDChar
+        movlw   0xB8
+        call    WriteLCDChar
+        movlw   0xBE
+        call    WriteLCDChar
+        movlw   0x2D
+        call    WriteLCDChar
+        movlw   0xB2
+        call    WriteLCDChar
+        movlw   0xB8
+        call    WriteLCDChar
+        movlw   0xBE
+        call    WriteLCDChar
+        movlw   0x21
+        call    WriteLCDChar
+        movlw   0xC9
+        call    WriteLCDChar
+        goto    $
 
 ;;; Delay subroutine. W reg must hold amount of 250 us delays
 Delay250us:
@@ -97,22 +115,33 @@ ClearLCD:
         return
 
 
-;;; Initializes LCD function
+;;; Initializes LCD communication mode, init display and clear it
 InitLCD:
-        movlw   10
-        call    Delay2us
+        movlw   1
+        call    Delay250us
         movlw   30
         call    WriteLCD
-        movlw   10
-        call    Delay2us
+        movlw   100
+        call    Delay250us
         movlw   30
         call    WriteLCD
-        movlw   10
-        call    Delay2us
-        movlw   30
-        call    WriteLCD
-        call    WaitForBusyFlag
+
+        movlw   1
+        call    Delay250us
+        
         movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
+        call    WriteLCD
+
+        movlw   1
+        call    Delay250us
+
+        movlw   B'1110'
+        call    WriteLCD
+
+        movlw   1
+        call    Delay250us
+
+        movlw   B'1'
         call    WriteLCD
         return
 
@@ -137,35 +166,20 @@ WaitLoop:
 
 ;;; write byte from WReg to LCD
 WriteLCD:
+        ;; setup RS and RW
         bcf     PORTB, RS
-        bcf     PORTB, RW
-        nop
-        nop
-        nop
-        nop
-        bsf     PORTB, E
-        movwf   PORTA
-        bcf     PORTB, DB6
-        bcf     PORTB, DB7
-        btfsc   WREG, 6
-        bsf     PORTB, DB6
-        btfsc   WREG, 7
-        bsf     PORTB, DB7
-        nop
-        nop
-        nop
-        nop
-        bcf     PORTB, E
+        call    WriteLCDByte
         return
-
+        
 WriteLCDChar:
         bsf     PORTB, RS
+        call    WriteLCDByte
+        return
+        
+;;; Write WReg value to LCD port. We assume that RS pin is set correctly
+WriteLCDByte:
         bcf     PORTB, RW
-        nop
-        nop
-        nop
-        nop
-        bsf     PORTB, E
+        ;; output data
         movwf   PORTA
         bcf     PORTB, DB6
         bcf     PORTB, DB7
@@ -173,11 +187,23 @@ WriteLCDChar:
         bsf     PORTB, DB6
         btfsc   WREG, 7
         bsf     PORTB, DB7
-        nop
-        nop
-        nop
-        nop
+
+        ;; delay
+        movlw   10
+        call    Delay2us
+
+        ;; set E high
+        bsf     PORTB, E
+
+        ;; delay
+        movlw   10
+        call    Delay2us
+
+        ;; set to low
         bcf     PORTB, E
-        bcf     PORTB, RS
+
+        ;; delay
+        movlw   10
+        call    Delay2us
         return
         end
