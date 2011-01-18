@@ -1,0 +1,19 @@
+# MPLAB IDE generated this makefile for use with GNU make.
+# Project: base-lcd.mcp
+# Date: Tue Jan 18 03:30:24 2011
+
+AS = MPASMWIN.exe
+CC = mcc18.exe
+LD = mplink.exe
+AR = mplib.exe
+RM = del
+
+base-lcd.cof : base-lcd.o
+	$(LD) /p18F2550 /l"C:\Program Files\Microchip\mplabc18\v3.37.01\lib" "base-lcd.o" /u_CRUNTIME /u_DEBUG /z__MPLAB_BUILD=1 /z__MPLAB_DEBUG=1 /o"base-lcd.cof" /M"base-lcd.map" /W
+
+base-lcd.o : base-lcd.c ../../../../../../../Program\ Files/Microchip/mplabc18/v3.37.01/h/p18f2550.h
+	$(CC) -p=18F2550 "base-lcd.c" -fo="base-lcd.o" -D__DEBUG -Ou- -Ot- -Ob- -Op- -Or- -Od- -Opa-
+
+clean : 
+	$(RM) "base-lcd.o" "base-lcd.cof" "base-lcd.hex"
+
