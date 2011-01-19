@@ -6,13 +6,11 @@ __CONFIG (PWRTEN);
 
 void main ()
 {
-    int i;
-
     TRISD = 0;
     while (1) {
         PORTD = 0;
-        for (i = 0; i < 10000; i++) {};
+        _delay (10000);
         PORTD = 0xFF;
-        for (i = 0; i < 10000; i++) {};
+        _delay (10000);
     }
 }
