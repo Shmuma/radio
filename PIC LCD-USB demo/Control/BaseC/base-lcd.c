@@ -1,5 +1,5 @@
 #include <p18f2550.h>
-#include <xlcd.h>
+#include "xlcd/xlcd.h"
 #include <delays.h>
 
 #pragma config WDT = OFF, FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
@@ -26,5 +26,7 @@ void DelayXLCD(void)
 void main (void)
 {
     OpenXLCD (FOUR_BIT & LINES_5X7);
+    while (BusyXLCD ());
+
     putrsXLCD ("Hello, World!");
 }

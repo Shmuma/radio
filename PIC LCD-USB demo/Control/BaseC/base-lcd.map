@@ -1,45 +1,57 @@
 MPLINK 4.37, Linker
-Linker Map File - Created Wed Jan 19 22:08:36 2011
+Linker Map File - Created Wed Jan 19 23:49:34 2011
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
                _entry_scn       code   0x000000    program   0x000006
                    .cinit    romdata   0x000006    program   0x000002
-         .code_openxlcd.o       code   0x000008    program   0x0000de
-               _cinit_scn       code   0x0000e6    program   0x00009e
-         .code_putrxlcd.o       code   0x000184    program   0x000060
-         .code_setddram.o       code   0x0001e4    program   0x000056
-         .code_writdata.o       code   0x00023a    program   0x000052
-         .code_wcmdxlcd.o       code   0x00028c    program   0x000052
-         .code_base-lcd.o       code   0x0002de    program   0x000040
-         .code_busyxlcd.o       code   0x00031e    program   0x00003e
-             D10KTCYXCODE       code   0x00035c    program   0x00002e
-              D1KTCYXCODE       code   0x00038a    program   0x000020
-                    .code       code   0x0003aa    program   0x000020
-             _startup_scn       code   0x0003ca    program   0x00001c
-              D10TCYXCODE       code   0x0003e6    program   0x000016
-             .stringtable    romdata   0x0003fc    program   0x00000e
-           .code___init.o       code   0x00040a    program   0x000002
-         .idata_c018i.o_i    romdata   0x00040c    program   0x000000
-         .romdata_c018i.o    romdata   0x00040c    program   0x000000
-      .romdata_writdata.o    romdata   0x00040c    program   0x000000
-      .idata_writdata.o_i    romdata   0x00040c    program   0x000000
-            .code_c018i.o       code   0x00040c    program   0x000000
-      .romdata_putrxlcd.o    romdata   0x00040c    program   0x000000
-      .idata_putrxlcd.o_i    romdata   0x00040c    program   0x000000
-        .romdata___init.o    romdata   0x00040c    program   0x000000
-        .idata___init.o_i    romdata   0x00040c    program   0x000000
-      .romdata_wcmdxlcd.o    romdata   0x00040c    program   0x000000
-      .idata_wcmdxlcd.o_i    romdata   0x00040c    program   0x000000
-      .idata_base-lcd.o_i    romdata   0x00040c    program   0x000000
-      .romdata_setddram.o    romdata   0x00040c    program   0x000000
-      .idata_setddram.o_i    romdata   0x00040c    program   0x000000
-      .romdata_base-lcd.o    romdata   0x00040c    program   0x000000
-      .romdata_openxlcd.o    romdata   0x00040c    program   0x000000
-      .idata_openxlcd.o_i    romdata   0x00040c    program   0x000000
-      .romdata_busyxlcd.o    romdata   0x00040c    program   0x000000
-      .idata_busyxlcd.o_i    romdata   0x00040c    program   0x000000
+         .code_openxlcd.o       code   0x000008    program   0x0000dc
+               _cinit_scn       code   0x0000e4    program   0x00009e
+         .code_putrxlcd.o       code   0x000182    program   0x000052
+         .code_putsxlcd.o       code   0x0001d4    program   0x00004e
+         .code_base-lcd.o       code   0x000222    program   0x00004a
+         .code_setddram.o       code   0x00026c    program   0x000032
+         .code_setcgram.o       code   0x00029e    program   0x000032
+         .code_wcmdxlcd.o       code   0x0002d0    program   0x000030
+         .code_readdata.o       code   0x000300    program   0x000030
+         .code_readaddr.o       code   0x000330    program   0x000030
+             D10KTCYXCODE       code   0x000360    program   0x00002e
+         .code_writdata.o       code   0x00038e    program   0x00002e
+         .code_busyxlcd.o       code   0x0003bc    program   0x000026
+              D1KTCYXCODE       code   0x0003e2    program   0x000020
+                    .code       code   0x000402    program   0x000020
+             _startup_scn       code   0x000422    program   0x00001c
+              D10TCYXCODE       code   0x00043e    program   0x000016
+             .stringtable    romdata   0x000454    program   0x00000e
+           .code___init.o       code   0x000462    program   0x000002
+      .romdata_wcmdxlcd.o    romdata   0x000464    program   0x000000
+      .idata_wcmdxlcd.o_i    romdata   0x000464    program   0x000000
+      .idata_writdata.o_i    romdata   0x000464    program   0x000000
+        .idata___init.o_i    romdata   0x000464    program   0x000000
+      .romdata_setddram.o    romdata   0x000464    program   0x000000
+      .idata_setddram.o_i    romdata   0x000464    program   0x000000
+      .romdata_writdata.o    romdata   0x000464    program   0x000000
+        .romdata___init.o    romdata   0x000464    program   0x000000
+      .romdata_setcgram.o    romdata   0x000464    program   0x000000
+      .idata_setcgram.o_i    romdata   0x000464    program   0x000000
+         .idata_c018i.o_i    romdata   0x000464    program   0x000000
+         .romdata_c018i.o    romdata   0x000464    program   0x000000
+            .code_c018i.o       code   0x000464    program   0x000000
+      .idata_base-lcd.o_i    romdata   0x000464    program   0x000000
+      .romdata_base-lcd.o    romdata   0x000464    program   0x000000
+      .idata_busyxlcd.o_i    romdata   0x000464    program   0x000000
+      .romdata_busyxlcd.o    romdata   0x000464    program   0x000000
+      .idata_openxlcd.o_i    romdata   0x000464    program   0x000000
+      .romdata_openxlcd.o    romdata   0x000464    program   0x000000
+      .idata_putrxlcd.o_i    romdata   0x000464    program   0x000000
+      .romdata_putrxlcd.o    romdata   0x000464    program   0x000000
+      .idata_putsxlcd.o_i    romdata   0x000464    program   0x000000
+      .romdata_putsxlcd.o    romdata   0x000464    program   0x000000
+      .idata_readaddr.o_i    romdata   0x000464    program   0x000000
+      .romdata_readaddr.o    romdata   0x000464    program   0x000000
+      .idata_readdata.o_i    romdata   0x000464    program   0x000000
+      .romdata_readdata.o    romdata   0x000464    program   0x000000
 .config_300000_base-lcd.o    romdata   0x300000    program   0x000001
 .config_300001_base-lcd.o    romdata   0x300001    program   0x000001
 .config_300003_base-lcd.o    romdata   0x300003    program   0x000001
@@ -49,16 +61,24 @@ Linker Map File - Created Wed Jan 19 22:08:36 2011
                 DELAYDAT1      udata   0x000003       data   0x000001
                  .tmpdata      udata   0x000004       data   0x000000
            .udata_c018i.o      udata   0x000060       data   0x00000a
-        .idata_writdata.o      idata   0x00006a       data   0x000000
-        .udata_writdata.o      udata   0x00006a       data   0x000000
-        .idata_putrxlcd.o      idata   0x00006a       data   0x000000
-        .udata_putrxlcd.o      udata   0x00006a       data   0x000000
           .idata___init.o      idata   0x00006a       data   0x000000
           .udata___init.o      udata   0x00006a       data   0x000000
+        .idata_writdata.o      idata   0x00006a       data   0x000000
+        .udata_writdata.o      udata   0x00006a       data   0x000000
         .idata_wcmdxlcd.o      idata   0x00006a       data   0x000000
         .udata_wcmdxlcd.o      udata   0x00006a       data   0x000000
         .idata_setddram.o      idata   0x00006a       data   0x000000
         .udata_setddram.o      udata   0x00006a       data   0x000000
+        .idata_setcgram.o      idata   0x00006a       data   0x000000
+        .udata_setcgram.o      udata   0x00006a       data   0x000000
+        .idata_readdata.o      idata   0x00006a       data   0x000000
+        .udata_readdata.o      udata   0x00006a       data   0x000000
+        .idata_readaddr.o      idata   0x00006a       data   0x000000
+        .udata_readaddr.o      udata   0x00006a       data   0x000000
+        .idata_putsxlcd.o      idata   0x00006a       data   0x000000
+        .udata_putsxlcd.o      udata   0x00006a       data   0x000000
+        .idata_putrxlcd.o      idata   0x00006a       data   0x000000
+        .udata_putrxlcd.o      udata   0x00006a       data   0x000000
         .idata_openxlcd.o      idata   0x00006a       data   0x000000
         .udata_openxlcd.o      udata   0x00006a       data   0x000000
         .idata_busyxlcd.o      idata   0x00006a       data   0x000000
@@ -74,71 +94,71 @@ Linker Map File - Created Wed Jan 19 22:08:36 2011
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x00040b      
+                            0x000000    0x000463      
                             0x300000    0x300001      
                             0x300003    0x300003      
                             0x300006    0x300006      
-            1040 out of 33048 program addresses used, program memory utilization is 3%
+            1128 out of 33048 program addresses used, program memory utilization is 3%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                 BusyXLCD   0x00031e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\busyxlcd.c
-                   D10K_1   0x000368    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                    D10Kl   0x000374    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                    D10Kx   0x000366    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                    D10_1   0x0003f6    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-                     D10x   0x0003ee    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-                    D1K_1   0x000396    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-                     D1Kx   0x000394    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-             Delay10KTCYx   0x00035c    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-              Delay10TCYx   0x0003e6    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-              Delay1KTCYx   0x00038a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-            DelayFor18TCY   0x0002de    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-             DelayPORXLCD   0x0002ea    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                DelayXLCD   0x0002f6    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                 OpenXLCD   0x000008    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\openxlcd.c
-             SetDDRamAddr   0x0001e4    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\setddram.c
-             WriteCmdXLCD   0x00028c    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\wcmdxlcd.c
-            WriteDataXLCD   0x00023a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\writdata.c
-       _D10KTCYXCODE_0010   0x00036c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-       _D10KTCYXCODE_001C   0x000378    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-        _D10TCYXCODE_000A   0x0003f0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D10TCYXCODE_000C   0x0003f2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D10TCYXCODE_000E   0x0003f4    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D1KTCYXCODE_0010   0x00039a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-        _D1KTCYXCODE_0016   0x0003a0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+                 BusyXLCD   0x0003bc    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\busyxlcd.c
+                   D10K_1   0x00036c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                    D10Kl   0x000378    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                    D10Kx   0x00036a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                    D10_1   0x00044e    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+                     D10x   0x000446    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+                    D1K_1   0x0003ee    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+                     D1Kx   0x0003ec    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+             Delay10KTCYx   0x000360    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+              Delay10TCYx   0x00043e    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+              Delay1KTCYx   0x0003e2    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+            DelayFor18TCY   0x000222    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+             DelayPORXLCD   0x00022e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                DelayXLCD   0x00023a    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                 OpenXLCD   0x000008    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\openxlcd.c
+             ReadAddrXLCD   0x000330    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\readaddr.c
+             ReadDataXLCD   0x000300    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\readdata.c
+             SetCGRamAddr   0x00029e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\setcgram.c
+             SetDDRamAddr   0x00026c    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\setddram.c
+             WriteCmdXLCD   0x0002d0    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\wcmdxlcd.c
+            WriteDataXLCD   0x00038e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\writdata.c
+       _D10KTCYXCODE_0010   0x000370    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+       _D10KTCYXCODE_001C   0x00037c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+        _D10TCYXCODE_000A   0x000448    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D10TCYXCODE_000C   0x00044a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D10TCYXCODE_000E   0x00044c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D1KTCYXCODE_0010   0x0003f2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+        _D1KTCYXCODE_0016   0x0003f8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
        ___return_lbl00000   0x000004    program     static                          
-       ___return_lbl00001   0x0003e4    program     static                          
-       ___return_lbl00002   0x000182    program     static                          
+       ___return_lbl00001   0x00043c    program     static                          
+       ___return_lbl00002   0x000180    program     static                          
                __config_0   0x300000    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
                __config_1   0x300001    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
                __config_2   0x300003    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
                __config_3   0x300006    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                   __init   0x00040a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\stdclib\__init.c
-                   __pa_0   0x00022c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\setddram.c
-                   __pa_0   0x0002d0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\wcmdxlcd.c
-                   __pa_0   0x0001cc    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\putrxlcd.c
-                   __pa_0   0x00027e    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\writdata.c
-               __string_0   0x0003fc    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-            __zero_memory   0x0003aa    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                _do_cinit   0x0000e6    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
+                   __init   0x000462    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\stdclib\__init.c
+               __string_0   0x000454    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+            __zero_memory   0x000402    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                _do_cinit   0x0000e4    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
                    _entry   0x000000    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
-                 _startup   0x0003ca    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
-                compare_l   0x0003c0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                copy_loop   0x000158    program     static                          
-            copy_one_byte   0x00015e    program     static                          
-                     done   0x000182    program     static                          
-             done_copying   0x00016c    program     static                          
-                     loop   0x0003da    program     static                          
-                   loop_h   0x0003b8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                   loop_l   0x0003c2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                     main   0x000302    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                putrsXLCD   0x000184    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\putrxlcd.c
-                     test   0x000100    program     static                          
-               zero_block   0x0003b8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                 _startup   0x000422    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
+                compare_l   0x000418    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                copy_loop   0x000156    program     static                          
+            copy_one_byte   0x00015c    program     static                          
+                     done   0x000180    program     static                          
+             done_copying   0x00016a    program     static                          
+                     loop   0x000432    program     static                          
+                   loop_h   0x000410    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                   loop_l   0x00041a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                     main   0x000246    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                putrsXLCD   0x000182    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\putrxlcd.c
+                 putsXLCD   0x0001d4    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\putsxlcd.c
+                     test   0x0000fe    program     static                          
+               zero_block   0x000410    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
                    ADCON0   0x000fc2       data     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
                ADCON0bits   0x000fc2       data     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
                    ADCON1   0x000fc1       data     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
@@ -383,54 +403,54 @@ Linker Map File - Created Wed Jan 19 22:08:36 2011
                 ---------  ---------  ---------  --------- ---------                
                    _entry   0x000000    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
        ___return_lbl00000   0x000004    program     static                          
-                 OpenXLCD   0x000008    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\openxlcd.c
-                _do_cinit   0x0000e6    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
-                     test   0x000100    program     static                          
-                copy_loop   0x000158    program     static                          
-            copy_one_byte   0x00015e    program     static                          
-             done_copying   0x00016c    program     static                          
-       ___return_lbl00002   0x000182    program     static                          
-                     done   0x000182    program     static                          
-                putrsXLCD   0x000184    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\putrxlcd.c
-                   __pa_0   0x0001cc    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\putrxlcd.c
-             SetDDRamAddr   0x0001e4    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\setddram.c
-                   __pa_0   0x00022c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\setddram.c
-            WriteDataXLCD   0x00023a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\writdata.c
-                   __pa_0   0x00027e    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\writdata.c
-             WriteCmdXLCD   0x00028c    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\wcmdxlcd.c
-                   __pa_0   0x0002d0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\pmc_common\XLCD\wcmdxlcd.c
-            DelayFor18TCY   0x0002de    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-             DelayPORXLCD   0x0002ea    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                DelayXLCD   0x0002f6    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                     main   0x000302    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                 BusyXLCD   0x00031e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\busyxlcd.c
-             Delay10KTCYx   0x00035c    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                    D10Kx   0x000366    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                   D10K_1   0x000368    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-       _D10KTCYXCODE_0010   0x00036c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-                    D10Kl   0x000374    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-       _D10KTCYXCODE_001C   0x000378    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
-              Delay1KTCYx   0x00038a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-                     D1Kx   0x000394    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-                    D1K_1   0x000396    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-        _D1KTCYXCODE_0010   0x00039a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-        _D1KTCYXCODE_0016   0x0003a0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
-            __zero_memory   0x0003aa    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-               zero_block   0x0003b8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                   loop_h   0x0003b8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                compare_l   0x0003c0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                   loop_l   0x0003c2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
-                 _startup   0x0003ca    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
-                     loop   0x0003da    program     static                          
-       ___return_lbl00001   0x0003e4    program     static                          
-              Delay10TCYx   0x0003e6    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-                     D10x   0x0003ee    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D10TCYXCODE_000A   0x0003f0    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D10TCYXCODE_000C   0x0003f2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-        _D10TCYXCODE_000E   0x0003f4    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-                    D10_1   0x0003f6    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
-               __string_0   0x0003fc    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
-                   __init   0x00040a    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\stdclib\__init.c
+                 OpenXLCD   0x000008    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\openxlcd.c
+                _do_cinit   0x0000e4    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
+                     test   0x0000fe    program     static                          
+                copy_loop   0x000156    program     static                          
+            copy_one_byte   0x00015c    program     static                          
+             done_copying   0x00016a    program     static                          
+       ___return_lbl00002   0x000180    program     static                          
+                     done   0x000180    program     static                          
+                putrsXLCD   0x000182    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\putrxlcd.c
+                 putsXLCD   0x0001d4    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\putsxlcd.c
+            DelayFor18TCY   0x000222    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+             DelayPORXLCD   0x00022e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                DelayXLCD   0x00023a    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                     main   0x000246    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+             SetDDRamAddr   0x00026c    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\setddram.c
+             SetCGRamAddr   0x00029e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\setcgram.c
+             WriteCmdXLCD   0x0002d0    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\wcmdxlcd.c
+             ReadDataXLCD   0x000300    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\readdata.c
+             ReadAddrXLCD   0x000330    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\readaddr.c
+             Delay10KTCYx   0x000360    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                    D10Kx   0x00036a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                   D10K_1   0x00036c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+       _D10KTCYXCODE_0010   0x000370    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+                    D10Kl   0x000378    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+       _D10KTCYXCODE_001C   0x00037c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10ktcyx.asm
+            WriteDataXLCD   0x00038e    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\writdata.c
+                 BusyXLCD   0x0003bc    program     extern C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\xlcd\busyxlcd.c
+              Delay1KTCYx   0x0003e2    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+                     D1Kx   0x0003ec    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+                    D1K_1   0x0003ee    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+        _D1KTCYXCODE_0010   0x0003f2    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+        _D1KTCYXCODE_0016   0x0003f8    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d1ktcyx.asm
+            __zero_memory   0x000402    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+               zero_block   0x000410    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                   loop_h   0x000410    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                compare_l   0x000418    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                   loop_l   0x00041a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\proc\p18F2550.asm
+                 _startup   0x000422    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\startup\c018i.c
+                     loop   0x000432    program     static                          
+       ___return_lbl00001   0x00043c    program     static                          
+              Delay10TCYx   0x00043e    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+                     D10x   0x000446    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D10TCYXCODE_000A   0x000448    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D10TCYXCODE_000C   0x00044a    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+        _D10TCYXCODE_000E   0x00044c    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+                    D10_1   0x00044e    program     static C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\delays\d10tcyx.asm
+               __string_0   0x000454    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
+                   __init   0x000462    program     extern C:\Program Files\Microchip\mplabc18\v3.37\src\traditional\stdclib\__init.c
                __config_0   0x300000    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
                __config_1   0x300001    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c
                __config_2   0x300003    program     static C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\BaseC\base-lcd.c

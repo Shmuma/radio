@@ -23,7 +23,7 @@
 /* Interface type 8-bit or 4-bit
  * For 8-bit operation uncomment the #define BIT8
  */
-/* #define BIT8 */
+#define BIT8
 
 /* When in 4-bit interface define if the data is in the upper
  * or lower nibble.  For lower nibble, comment the #define UPPER

@@ -42,10 +42,6 @@ DB7     equ     RB4
 
         call    InitLCD
         call    WaitForBusyFlag
-        movlw   B'110'
-        call    WriteLCD
-        movlw   10
-        call    Delay250us
 WriteLoop:
         movlw   0xC8
         call    WriteLCDChar
@@ -70,19 +66,22 @@ WriteLoop:
         goto    $
 
 ;;; Delay subroutine. W reg must hold amount of 250 us delays
+;;; On 12 Mhz we have 3 instructions per 1 us (microsecond)
 Delay250us:
         movwf   Delay2
 Delay250Loop:
+        nop
         decfsz  Delay1, f
         goto    Delay250Loop
         decfsz  Delay2, f
         goto    Delay250Loop
         return
 
-;;; W reg must hold amount of 2 us delays
-Delay2us:
+;;; W reg must hold amount of 1 us delays
+Delay1us:
         movwf   Delay1
-Delay2Loop:     
+Delay2Loop:
+        nop
         decfsz  Delay1, f
         goto    Delay2Loop
         return
@@ -117,52 +116,64 @@ ClearLCD:
 
 ;;; Initializes LCD communication mode, init display and clear it
 InitLCD:
-        movlw   100
+        movlw   60
         call    Delay250us
         movlw   30
         call    WriteLCD
-        movlw   100
+        movlw   60
         call    Delay250us
         movlw   30
         call    WriteLCD
-
-        movlw   100
+        movlw   10
         call    Delay250us
-        
+        movlw   32
+        call    WriteLCD
+
+        call    WaitForBusyFlag
+
         movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
         call    WriteLCD
 
-        movlw   100
-        call    Delay250us
+        call    WaitForBusyFlag
 
-        movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
+        movlw   B'1000'         ;display off, cursor off, blink off
         call    WriteLCD
 
-        movlw   100
-        call    Delay250us
+        call    WaitForBusyFlag
+
+        movlw   B'1111'         ;display on, cursor on, blink on
+        call    WriteLCD
         
-        movlw   B'1110'
-        call    WriteLCD
-
-        movlw   100
-        call    Delay250us
+        call    WaitForBusyFlag
 
         movlw   B'1'
+        call    WriteLCD
+        movlw   10
+        call    Delay250us
+        movlw   B'110'
         call    WriteLCD
         return
 
 WaitForBusyFlag:
+        bcf     PORTB, DB7
         bsf     TRISA, DB7      ; switch it to input
         bcf     PORTB, RS
         bsf     PORTB, RW
 
 WaitLoop:
-        nop
+        movlw   20
+        call    Delay1us
+
         bsf     PORTB, E
-        nop
+
+        movlw   20
+        call    Delay1us
 
         bcf     PORTB, E
 
+        movlw   20
+        call    Delay1us
+        
         btfsc   PORTB, DB7
         goto    WaitLoop
 
@@ -196,20 +207,16 @@ WriteLCDByte:
 
         ;; delay
         movlw   10
-        call    Delay2us
+        call    Delay1us
 
         ;; set E high
         bsf     PORTB, E
 
         ;; delay
         movlw   10
-        call    Delay2us
+        call    Delay1us
 
         ;; set to low
         bcf     PORTB, E
-
-        ;; delay
-        movlw   10
-        call    Delay2us
         return
         end
