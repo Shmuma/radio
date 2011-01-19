@@ -44,7 +44,7 @@ DB7     equ     RB4
         call    WaitForBusyFlag
         movlw   B'110'
         call    WriteLCD
-        movlw   200
+        movlw   10
         call    Delay250us
 WriteLoop:
         movlw   0xC8
@@ -117,7 +117,7 @@ ClearLCD:
 
 ;;; Initializes LCD communication mode, init display and clear it
 InitLCD:
-        movlw   1
+        movlw   100
         call    Delay250us
         movlw   30
         call    WriteLCD
@@ -126,19 +126,25 @@ InitLCD:
         movlw   30
         call    WriteLCD
 
-        movlw   1
+        movlw   100
         call    Delay250us
         
         movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
         call    WriteLCD
 
-        movlw   1
+        movlw   100
         call    Delay250us
 
+        movlw   B'111000'         ; 8 bit, 2 line, 8x5 dots
+        call    WriteLCD
+
+        movlw   100
+        call    Delay250us
+        
         movlw   B'1110'
         call    WriteLCD
 
-        movlw   1
+        movlw   100
         call    Delay250us
 
         movlw   B'1'

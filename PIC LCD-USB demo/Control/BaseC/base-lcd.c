@@ -1,24 +1,30 @@
 #include <p18f2550.h>
+#include <xlcd.h>
+#include <delays.h>
 
-#pragma config WDT = OFF
+#pragma config WDT = OFF, FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
+#pragma config DEBUG = OFF
 
-void delay ()
+
+void DelayFor18TCY(void)
 {
-	overlay unsigned char a, b;
+    Delay10TCYx (2);
+}
 
-	for (a = 0; a < 100; a++)
-		for (b = 0; b < 10; b++) {}
+void DelayPORXLCD(void)
+{
+    /* 15 ms */
+    Delay1KTCYx (45);
+}
+
+void DelayXLCD(void)
+{
+    /* 5 ms */
+    Delay1KTCYx (15);
 }
 
 void main (void)
 {
-	int lp;
-
-	TRISB = 0x00;
-	while (1) {
-		PORTB = 0x00;
-		delay ();
-		PORTB = 0xFF;
-		delay ();
-	}
+    OpenXLCD (FOUR_BIT & LINES_5X7);
+    putrsXLCD ("Hello, World!");
 }
