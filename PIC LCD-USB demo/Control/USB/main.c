@@ -43,28 +43,29 @@ void main ()
 {
     InitDevice ();
     InitLCD ();
-
 //    if (InitializeUSB ())
 //        return;
 
 //    USBDeviceAttach ();
-
+    putStrRom ("Hello, World!!!!");
+    
     while (1) {
+    }
 //        if (USBDeviceState < CONFIGURED_STATE)
 //            continue;
 
 //        bitset (PORTB, E_PORT);
-        Delay10TCYx (10);
-        ClearLCD ();
+//        Delay10TCYx (10);
+//        ClearLCD ();
 //        bitclr (PORTB, E_PORT);
-        Delay10TCYx (10);
-    }
+//        Delay10TCYx (10);
+//    }
 }
 
 void InitDevice ()
 {
-    /* clear 4 lower bits -> switch all IO into digital */
-    ADCON1 &= 0xF0;
+    /* set 4 lower bits -> switch all IO into digital */
+    ADCON1 |= 0x0F;
 
     /* output */
     TRISA = TRISB = 0;
