@@ -1,8 +1,12 @@
 #include <p18f2550.h>
 #include <delays.h>
 
+#include "common.h"
+#include "lcd.h"
+
 #include "USB/usb.h"
 #include "USB/usb_common.h"
+#include "USB/usb_function_generic.h"
 
 /*
 __CONFIG (1, HS & CPUDIV2 & PLLDIV12);
@@ -14,13 +18,19 @@ __CONFIG (6, UNPROTECT);
 __CONFIG (7, UNPROTECT);
 */
 
-#define bitset(var, bitno) ((var) |= 1UL << (bitno))
-#define bitclr(var, bitno) ((var) &= ~(1UL << (bitno)))
 
-#pragma config WDT = OFF, FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3, MCLRE=ON
+#pragma config WDT = OFF, FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3, MCLRE=ON, USBDIV=2, BOR=ON, BORV=3, VREGEN=ON
 #pragma config DEBUG = OFF
 
 #define E_PORT 2
+
+unsigned char OUTPacket[64];
+unsigned char INPacket[64];
+
+#pragma udata
+USB_HANDLE USBGenericOutHandle;
+USB_HANDLE USBGenericInHandle;
+#pragma udata
 
 
 void InitDevice ();
@@ -32,19 +42,21 @@ void USBCBInitEP ();
 void main ()
 {
     InitDevice ();
+    InitLCD ();
 
-    if (InitializeUSB ())
-        return;
+//    if (InitializeUSB ())
+//        return;
 
-    USBDeviceAttach ();
+//    USBDeviceAttach ();
 
     while (1) {
-        USBDeviceTasks ();
-        if (USBDeviceState < CONFIGURED_STATE)
-            continue;
-        bitset (PORTB, E_PORT);
+//        if (USBDeviceState < CONFIGURED_STATE)
+//            continue;
+
+//        bitset (PORTB, E_PORT);
         Delay10TCYx (10);
-        bitclr (PORTB, E_PORT);
+        ClearLCD ();
+//        bitclr (PORTB, E_PORT);
         Delay10TCYx (10);
     }
 }
@@ -61,6 +73,7 @@ void InitDevice ()
 
 int InitializeUSB ()
 {
+    USBGenericInHandle = USBGenericOutHandle = 0;
     USBDeviceInit ();
     return (0);
 }
@@ -80,5 +93,6 @@ BOOL USER_USB_CALLBACK_EVENT_HANDLER (USB_EVENT event, void *pdata, WORD size)
 
 void USBCBInitEP ()
 {
-    USBEnableEndpoint(HID_EP,USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
+    USBEnableEndpoint(USBGEN_EP_NUM, USB_IN_ENABLED | USB_OUT_ENABLED | USB_HANDSHAKE_ENABLED | USB_DISALLOW_SETUP);
+    USBGenericOutHandle = USBGenRead (USBGEN_EP_NUM, (BYTE*)&OUTPacket, USBGEN_EP_SIZE);
 }

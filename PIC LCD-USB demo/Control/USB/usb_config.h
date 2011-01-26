@@ -155,17 +155,13 @@
 //#define USB_ENABLE_TRANSFER_COMPLETE_HANDLER
 
 /** DEVICE CLASS USAGE *********************************************/
-#define USB_USE_HID
+#define USB_USE_GEN             /* generic */
 
 /** ENDPOINTS ALLOCATION *******************************************/
 
-/* HID */
-#define HID_INTF_ID             0x00
-#define HID_EP 					1
-#define HID_INT_OUT_EP_SIZE     3
-#define HID_INT_IN_EP_SIZE      3
-#define HID_NUM_OF_DSC          1
-#define HID_RPT01_SIZE          28
+/* Generic device */
+#define USBGEN_EP_SIZE		64
+#define USBGEN_EP_NUM		1
 
 /** DEFINITIONS ****************************************************/
 
