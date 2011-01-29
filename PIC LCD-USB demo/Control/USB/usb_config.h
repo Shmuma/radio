@@ -84,16 +84,13 @@
 
 /* Parameter definitions are defined in usb_device.h */
 #define USB_PULLUP_OPTION USB_PULLUP_ENABLE
-//#define USB_PULLUP_OPTION USB_PULLUP_DISABLED
 
 #define USB_TRANSCEIVER_OPTION USB_INTERNAL_TRANSCEIVER
 //External Transceiver support is not available on all product families.  Please
 //  refer to the product family datasheet for more information if this feature
 //  is available on the target processor.
-//#define USB_TRANSCEIVER_OPTION USB_EXTERNAL_TRANSCEIVER
 
 #define USB_SPEED_OPTION USB_FULL_SPEED
-//#define USB_SPEED_OPTION USB_LOW_SPEED //(not valid option for PIC24F devices)
 
 //------------------------------------------------------------------------------------------------------------------
 //Option to enable auto-arming of the status stage of control transfers, if no

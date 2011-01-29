@@ -34,7 +34,7 @@ USB_HANDLE USBGenericInHandle;
 
 
 void InitDevice ();
-int InitializeUSB ();
+void InitializeUSB ();
 
 void USBCBInitEP ();
 
@@ -43,13 +43,27 @@ void main ()
 {
     InitDevice ();
     InitLCD ();
-//    if (InitializeUSB ())
-//        return;
+    InitializeUSB ();
+
+    /* UCONbits.USBEN = 0; */
+    /* UCFGbits.UTRDIS = 0; */
+    /* UCFGbits.UPUEN = 1; */
+    /* UCFGbits.FSEN = 1; */
+//    UCONbits.USBEN = 1;
+    UCON = 0;
 
 //    USBDeviceAttach ();
-    putStrRom ("Hello, World!!!!");
-    
     while (1) {
+        WriteLCDChar (UCFGbits.UTRDIS ? '0' : '1');
+        WaitForBusyFlag ();
+        WriteLCDChar (UCFGbits.FSEN  ? '0' : '1');
+        WaitForBusyFlag ();
+        WriteLCDChar (UCONbits.USBEN ? '0' : '1');
+        WaitForBusyFlag ();
+        WriteLCDChar (UCFGbits.UPUEN ? '0' : '1');
+        Delay10KTCYx (100);
+        ClearLCD ();
+        Delay10KTCYx (1);
     }
 //        if (USBDeviceState < CONFIGURED_STATE)
 //            continue;
@@ -72,18 +86,19 @@ void InitDevice ()
     PORTA = PORTB = 0;
 }
 
-int InitializeUSB ()
+void InitializeUSB ()
 {
     USBGenericInHandle = USBGenericOutHandle = 0;
     USBDeviceInit ();
-    return (0);
 }
 
 
 BOOL USER_USB_CALLBACK_EVENT_HANDLER (USB_EVENT event, void *pdata, WORD size)
 {
+    WriteLCDChar ('+');
     switch (event) {
         case EVENT_CONFIGURED: 
+            WriteLCDChar ('!');
             USBCBInitEP();
             break;
     }
