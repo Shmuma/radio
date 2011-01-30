@@ -4,7 +4,7 @@
 ;;;         CONFIG        _CONFIG2, _WRT_OFF & _BOR21V
 
 ;;; 12 MH external clock
-        CONFIG  FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3
+        CONFIG  FOSC=HS, CPUDIV=OSC1_PLL2, PLLDIV=3, USBDIV=2, VREGEN=ON
         CONFIG  DEBUG=OFF
 
         cblock  20
@@ -40,9 +40,54 @@ DB7     equ     RB4
         clrf    PORTA
         clrf    PORTB
 
+        call    InitUSB
+        
         call    InitLCD
         call    WaitForBusyFlag
-WriteLoop:
+
+        movlw   '0'
+        btfsc   UCON, 3         ; USBEN
+        movlw   '1'
+        call    WriteLCDChar
+        
+        movlw   '0'
+        btfsc   UCFG, 2         ; FSEN
+        movlw   '1'
+        call    WriteLCDChar
+
+        movlw   '0'
+        btfsc   UCFG, 3         ; UTRDIS
+        movlw   '1'
+        call    WriteLCDChar
+
+        movlw   '0'
+        btfsc   UCFG, 4         ; UPUEN
+        movlw   '1'
+        call    WriteLCDChar
+
+        movlw   ' '
+        call    WriteLCDChar
+
+        movlw   '0'
+        btfsc   USTAT, 3         ; ENDP
+        movlw   '1'
+        call    WriteLCDChar
+        movlw   '0'
+        btfsc   USTAT, 4         ; ENDP
+        movlw   '1'
+        call    WriteLCDChar
+        movlw   '0'
+        btfsc   USTAT, 5         ; ENDP
+        movlw   '1'
+        call    WriteLCDChar
+        movlw   '0'
+        btfsc   USTAT, 6         ; ENDP
+        movlw   '1'
+        call    WriteLCDChar
+        
+        goto    $
+        
+        ;; bip-bip
         movlw   0xC8
         call    WriteLCDChar
         movlw   0xA0
@@ -218,5 +263,12 @@ WriteLCDByte:
 
         ;; set to low
         bcf     PORTB, E
+        return
+
+InitUSB:
+        movlw   B'00010111'
+        movwf   UCFG
+
+        bsf     UCON, 3
         return
         end
