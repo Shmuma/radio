@@ -5,9 +5,9 @@
 
 /* control pins */
 /* PORTB */
-#define LCD_RS_PIN 0
-#define LCD_RW_PIN 1
-#define LCD_E_PIN  2
+#define LCD_RS_PIN PORTBbits.RB0
+#define LCD_RW_PIN PORTBbits.RB1
+#define LCD_E_PIN  PORTBbits.RB2
 
 #define LCD_DB6_PIN 3
 #define LCD_DB7_PIN 4
@@ -21,14 +21,16 @@
 #define LCD_DB5_PIN 5
 
 
-void InitLCD ();
+void InitLCD (void);
 void WriteLCDByte (unsigned char v);
 void WriteLCDChar (unsigned char v);
-void WaitForBusyFlag ();
+void WaitForBusyFlag (void);
 
-void ClearLCD ();
+void LCDClear (void);
+void LCDHome (void);
 
 void putStr (const char* s);
 void putStrRom (const rom char* s);
+void putNumber (unsigned int n);
 
 #endif /* __LCD_H__ */
