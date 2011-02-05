@@ -1,3 +1,12 @@
 *.b#*
 *.s#*
+
 *.err
+*.bak
+*.cof
+*.err
+*.esym
+*.lst
+*.sta
+*.sym
+*.tre

@@ -1,0 +1,27 @@
+[PROJECT]
+Target=C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\USB-Osc\usb_osc.hex
+Development_Mode=
+Processor_Text=PIC18F2550
+ToolSuite=CCS
+Processor=0x2550
+[C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\USB-Osc\usb_osc]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\USB-Osc\usb_osc.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Units]
+Link=0
+Count=1
+1=C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\USB-Osc\usb_osc
+[Opened Files]
+1=usb_osc.c
+2=..\..\..\..\..\..\..\Program Files\PICC\devices\18F2550.h
+3=usb_desc_hid 8-byte.h
+4=usb_desc_hid.h
+5=

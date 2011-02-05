@@ -1,0 +1,30 @@
+//#include <lcd_ccs.h>
+
+#include <18F2550.h>
+#FUSES NOWDT, WDT128, PLL3, CPUDIV1, USBDIV, HSPLL, FCMEN, IESO, NOPUT, NOBROWNOUT, BORV20, VREGEN, NOPBADEN, LPT1OSC, NOMCLR, STVREN, NOLVP, NOXINST, NODEBUG, NOPROTECT, NOCPB, NOCPD, NOWRT, NOWRTC, NOWRTB, NOWRTD, NOEBTR, NOEBTRB
+//#fuses HSPLL,NOWDT,NOPROTECT,NOLVP,NODEBUG,USBDIV,PLL3,CPUDIV1,VREGEN
+
+#use delay(clock=48000000)
+
+
+#define LCD_ENABLE_PIN PIN_B2
+#define LCD_RS_PIN PIN_B0
+#define LCD_RW_PIN PIN_B1
+#define LCD_DATA4 PIN_A4
+#define LCD_DATA5 PIN_A5
+#define LCD_DATA6 PIN_B3
+#define LCD_DATA7 PIN_B4
+#include <lcd.c>
+
+
+void main()
+{
+   lcd_init();
+
+   delay_ms (20);
+   lcd_putc ("\fLCD OK");
+
+   while(TRUE){
+       delay_ms (100);
+   }
+}
