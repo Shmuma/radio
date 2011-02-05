@@ -6,20 +6,44 @@
 
 #use delay(clock=48000000)
 
-#define USB_HID_DEVICE TRUE
+/* USB */
+#define USB_HID_DEVICE FALSE
 
 #include <pic18_usb.h>
 #include "usb_desc.h"
 #include <usb.c>
 
+/* LCD */
+#define LCD_EXTENDED_NEWLINE TRUE
+
+#define LCD_ENABLE_PIN PIN_B2
+#define LCD_RS_PIN PIN_B0
+#define LCD_RW_PIN PIN_B1
+#define LCD_DATA4 PIN_A4
+#define LCD_DATA5 PIN_A5
+#define LCD_DATA6 PIN_B3
+#define LCD_DATA7 PIN_B4
+#include <lcd.c>
+
+
 void main()
 {
-    setup_timer_3(T3_DISABLED|T3_DIV_BY_1);
+    setup_timer_3 (T3_DISABLED|T3_DIV_BY_1);
     enable_interrupts (GLOBAL);
     usb_init ();
+    lcd_init ();
     delay_ms (1);
     while (TRUE) {
         usb_task ();
-        delay_ms (1);
+        lcd_putc ('\f');
+        if (usb_enumerated ())
+            lcd_putc ("Enum: 1, ");
+        else
+            lcd_putc ("Enum: 0, ");
+        if (usb_attached ())
+            lcd_putc ("Att: 1");
+        else
+            lcd_putc ("Att: 0");
+        delay_ms (100);
     }
 }
