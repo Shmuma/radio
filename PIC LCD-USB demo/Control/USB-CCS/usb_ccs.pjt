@@ -20,7 +20,9 @@ Link=0
 Count=1
 1=C:\Users\Shmuma\Work\radio\PIC LCD-USB demo\Control\USB-CCS\usb_ccs
 [Opened Files]
-1=..\USB-CCS\usb_ccs.c
-2=..\..\..\..\..\..\..\Program Files\PICC\drivers\usb.c
-3=..\..\..\..\..\..\..\Program Files\PICC\drivers\pic18_usb.c
-4=
+1=usb_ccs.c
+2=usb_desc.h
+3=
+4=..\..\..\..\..\..\..\Program Files\PICC\devices\18F2550.h
+5=
+6=

@@ -1,52 +1,29 @@
 #ifndef __USB_DESCRIPTORS__
 #define __USB_DESCRIPTORS__
 
-#include <usb.h>
 
-#define USB_USE_FULL_SPEED TRUE
-
-const char USB_CLASS_SPECIFIC_DESC[] = {
-    6, 0, 255,    // Usage Page = Vendor Defined
-    9, 1,            // Usage = IO device
-    0xa1, 1,       // Collection = Application
-    0x19, 1,        // Usage minimum
-    0x29, 8,        // Usage maximum
-
-    0x15, 0x80,        // Logical minimum (-128)
-    0x25, 0x7F,        // Logical maximum (127)
-
-    0x75, 8,        // Report size = 8 (bits)
-    0x95, 8,        // Report count = 8 bytes
-    0x81, 2,        // Input (Data, Var, Abs)
-    0x19, 1,        // Usage minimum
-    0x29, 8,        // Usage maximum
-    0x75, 8,        // Report size = 8 (bits)
-    0x95, 8,        // Report count = 8 bytes
-    0x91, 2,        // Output (Data, Var, Abs)
-    0xc0            // End Collection
-};
-
-
-const int16 USB_CLASS_SPECIFIC_DESC_LOOKUP[USB_NUM_CONFIGURATIONS][1] =
-{
-    //config 1
-    //interface 0
-    0
-};
-
-const int16 USB_CLASS_SPECIFIC_DESC_LOOKUP_SIZE[USB_NUM_CONFIGURATIONS][1] =
-{
-    //config 1
-    //interface 0
-    32
-};
-
+//#define USB_USE_FULL_SPEED TRUE
 
 #define USB_CONFIG_PID       0xd001   //changing this value may make the driver incompatible
 #define USB_CONFIG_VID       0x04d8   //changing this value may make the driver incompatible
+#define USB_CONFIG_BUS_POWER 100
 #define USB_CONFIG_VERSION   0x0100      //01.00  //range is 00.00 to 99.99
 
-#define USB_CONFIG_BUS_POWER 500
+#define USB_HID_DEVICE		FALSE
+#define USB_EP1_TX_ENABLE	USB_ENABLE_BULK
+#define USB_EP1_RX_ENABLE	USB_ENABLE_BULK
+
+#ifndef USB_EP1_TX_SIZE
+#define USB_EP1_TX_SIZE		64
+#endif
+
+#ifndef USB_EP1_RX_SIZE
+#define USB_EP1_RX_SIZE	     	64
+#endif
+
+#include <usb.h>
+
+
 
 
    #DEFINE USB_TOTAL_CONFIG_LEN      32  //config+interface+class+endpoint
@@ -95,7 +72,7 @@ const int16 USB_CLASS_SPECIFIC_DESC_LOOKUP_SIZE[USB_NUM_CONFIGURATIONS][1] =
          USB_DESC_ENDPOINT_LEN, //length of descriptor                   ==35
          USB_DESC_ENDPOINT_TYPE, //constant ENDPOINT (ENDPOINT 0x05)          ==36
          0x01, //endpoint number and direction (0x01 = EP1 OUT)      ==37
-         0x03, //transfer type supported (0x03 is interrupt)         ==38
+         USB_ENABLE_INTERRUPT, //transfer type supported (0x03 is interrupt)         ==38
          USB_EP1_RX_SIZE & 0xFF,USB_EP1_RX_SIZE >> 8, //maximum packet size supported                  ==39,40
       #if USB_USE_FULL_SPEED
          1
@@ -123,7 +100,7 @@ const int16 USB_CLASS_SPECIFIC_DESC_LOOKUP_SIZE[USB_NUM_CONFIGURATIONS][1] =
       //starts of with device configuration. only one possible
          USB_DESC_DEVICE_LEN, //the length of this report   ==1
          0x01, //the constant DEVICE (DEVICE 0x01)  ==2
-         0x10,0x01, //usb version in bcd (pic167xx is 1.1) ==3,4
+         0x00,0x02, //usb version in bcd (pic167xx is 1.1) ==3,4
          0x00, //class code ==5
          0x00, //subclass code ==6
          0x00, //protocol code ==7
@@ -152,7 +129,7 @@ char const USB_STRING_DESC[]={
          'H',0,
          'M',0,
    //string 2
-         28, //length of string index
+         30, //length of string index
          USB_DESC_STRING_TYPE, //descriptor type 0x03 (STRING)
          'S',0,
          'h',0,
@@ -167,6 +144,7 @@ char const USB_STRING_DESC[]={
          '-',0,
          'U',0,
          'S',0,
+         'B',0,
 };
 
 
