@@ -1,0 +1,25 @@
+[PROJECT]
+Target=C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog-c\pingpong.hex
+Development_Mode=
+Processor_Text=PIC16F84A
+ToolSuite=CCS
+Processor=0x6F84
+[C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog-c\pingpong]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog-c\pingpong.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Units]
+Link=0
+Count=1
+1=C:\Users\Shmuma\Work\radio\Tim Wilmshurst - PIC book\Ping-Pong\prog-c\pingpong
+[Opened Files]
+1=pingpong.c
+2=..\..\..\..\..\..\..\Program Files\PICC\devices\16F84A.h
+3=
