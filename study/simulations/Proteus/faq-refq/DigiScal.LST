@@ -1,0 +1,869 @@
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;=============================================
+                      00002 ; DigiScal.asm
+                      00003 ; Цифровая шкала с возможностью
+                      00004 ; записи промежуточной частоты
+                      00005 ; Денисов А.Ю. Тамбов 1999
+                      00006 ; Исправлена ошибка в расчете частоты 16.11.2000
+                      00007 ;=============================================
+                      00008 ;
+                      00009         LIST    p=16F84
+2007   3FF1           00010        __CONFIG 03FF1H
+                      00011 ;=============================================
+                      00012                                    ; значения задержки
+                      00013                                    ; могут быть от 1 до 255
+  00000043            00014 T1          equ       .67          ; грубо
+  000000DD            00015 T2          equ       .221         ; точно
+                      00016                                    ; (подобрано для 4000 kHz)
+                      00017 ;=============================================
+                      00018 ;
+  00000000            00019 IndF        equ        00h         ; Доступ к памяти через FSR
+  00000001            00020 Timer0      equ        01h         ; TMR0
+  00000001            00021 OptionR     equ        01h         ; Option (RP0=1)
+  00000002            00022 PC          equ        02h         ; Счетчик команд
+  00000003            00023 Status      equ        03h         ; Status
+  00000004            00024 FSR         equ        04h         ; Регистр косвенной адресации
+  00000005            00025 PortA       equ        05h         ; Port A
+  00000005            00026 TrisA       equ        05h         ; Tris A - RP0=1
+  00000006            00027 PortB       equ        06h         ; Port B
+  00000006            00028 TrisB       equ        06h         ; Tris B - RP0=1
+  00000008            00029 EEData      equ        08h         ; EEPROM Data
+  00000008            00030 EECon1      equ        08h         ; EECON1 - RP0=1
+  00000009            00031 EEAdr       equ        09h         ; EEPROM Address
+  00000009            00032 EECon2      equ        09h         ; EECON2 - RP0=1
+                      00033 
+  0000000B            00034 IntCon      equ        0Bh         ;
+                      00035 ;
+  0000000C            00036 KeyBuf      equ        0Ch         ; буфер клавиатуры
+  0000000D            00037 KeyWait     equ        0Dh         ; ожидание клавиатуры
+  0000000E            00038 Count       equ        0Eh         ; временный счетчик
+  0000000F            00039 Count1      equ        0Fh         ; еще один
+                      00040 ;
+  00000010            00041 LED0        equ       010h         ;
+  00000011            00042 LED1        equ       011h         ;
+  00000012            00043 LED2        equ       012h         ;
+  00000013            00044 LED3        equ       013h         ; ячейки
+  00000014            00045 LED4        equ       014h         ; индикатора
+  00000015            00046 LED5        equ       015h         ;
+  00000016            00047 LED6        equ       016h         ;
+  00000017            00048 LED7        equ       017h         ;
+                      00049 ;
+  00000018            00050 Temp        equ       018h         ; временный регистр
+  00000019            00051 LEDIndex    equ       019h         ; указатель LED
+                      00052 
+  0000001A            00053 TimerL      equ       01ah         ; младший байт счетчика частоты
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+  0000001B            00054 TimerM      equ       01bh         ; средний байт счетчика частоты
+  0000001C            00055 TimerH      equ       01ch         ; старший байт счетчика частоты
+                      00056 
+  0000001D            00057 IF_L        equ       01dh         ; младший байт ПЧ
+  0000001E            00058 IF_M        equ       01eh         ; средний байт ПЧ
+  0000001F            00059 IF_H        equ       01fh         ; старший байт ПЧ
+                      00060 ;
+                      00061 ;=============================================
+                      00062 ;                                    Результат в
+  00000000            00063 W           equ        0           ; аккумуляторе
+  00000001            00064 F           equ        1           ; регистре
+                      00065 ;
+                      00066 ;=============================================
+                      00067 ; Flag bits:
+  00000000            00068 CF          equ        0           ; Carry
+  00000001            00069 DC          equ        1           ; DC
+  00000002            00070 ZF          equ        2           ; Zero
+                      00071 ;
+  00000005            00072 RP0         equ        5
+                      00073 ;=============================================
+2100                  00074             org        2100h
+                      00075 
+                      00076             ; частота ПЧ по умолчанию
+2100   0008 0064 0070 00077             DE         008h,064h,070h   ; 5.5 мгц
+                      00078 ;
+2103   0000 0000 0000 00079             DE         0h,0h,0h
+2106   0043 006F 0070 00080             DE      "Copyright (C) 1999 Alexander Y Denisov"
+       0079 0072 0069 
+       0067 0068 0074 
+       0020 0028 0043 
+       0029 0020 0031 
+       0039 0039 0039 
+       0020 0041 006C 
+       0065 0078 0061 
+       006E 0064 0065 
+       0072 0020 0059 
+       0020 0044 0065 
+       006E 0069 0073 
+       006F 0076 
+                      00081 
+                      00082 ;
+                      00083 ;=============================================
+                      00084 ;
+0000                  00085             org        0
+0000   287E           00086             goto    Start
+                      00087 ;
+                      00088 ;=============================================
+                      00089 ; Проверка клавиатуры
+                      00090 ;=============================================
+                      00091 ;
+0001                  00092 Inkey
+0001   0185           00093             clrf       PortA       ; RA0..RA3 = 0
+                      00094 
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0002   1683           00095             bsf        Status,RP0
+0003   3013           00096             movlw      b'00010011'
+0004   0085           00097             movwf      TrisA       ; RA0,RA1,RA4 input
+0005   1283           00098             bcf        Status,RP0  ;
+                      00099 
+0006   0805           00100             movf       PortA,w
+0007   3903           00101             andlw      b'00000011'
+0008   0008           00102             return
+                      00103 ;
+                      00104 ;=============================================
+0009                  00105 KeyQuery    ; опрос клавиатуры
+0009   2001           00106             call       Inkey
+000A   0782           00107             addwf      PC,f
+000B   280F           00108             goto       Fun         ; режим установки ПЧ
+000C   292A           00109             goto       plusIF      ; плюс ПЧ
+000D   2905           00110             goto       minusIF     ; минус ПЧ
+000E   2927           00111             goto       Go1         ; и все по новой.
+                      00112 ;
+000F                  00113 Fun
+000F   0A8D           00114             incf       KeyWait,f
+0010   1D8D           00115             btfss      KeyWait,3
+0011   2894           00116             goto       Go
+                      00117 
+0012   3000           00118             movlw      0
+0013   008D           00119             movwf      KeyWait
+0014                  00120 Function
+0014   2001           00121             call       Inkey
+0015   0782           00122             addwf      PC,f
+0016   2814           00123             goto       Function    ; ждем отжатия клавиш
+0017   0000           00124             nop
+0018   0000           00125             nop
+0019   0000           00126             nop
+001A   081A           00127             movf       TimerL,w
+001B   009D           00128             movwf      IF_L
+001C   081B           00129             movf       TimerM,w
+001D   009E           00130             movwf      IF_M
+001E   081C           00131             movf       TimerH,w
+001F   009F           00132             movwf      IF_H
+0020   2031           00133             call       Bin2LCD
+0021   2939           00134             goto       Edt
+                      00135 ;
+                      00136 ;=============================================
+                      00137 ;
+0022                  00138 FunOff
+0022   2001           00139             call       Inkey
+0023   0782           00140             addwf      PC,f
+0024   2828           00141             goto       Fun1
+0025   295C           00142             goto       NextFun     ; ничего не нажато
+0026   295C           00143             goto       NextFun     ; ничего не нажато
+0027   295C           00144             goto       NextFun     ; ничего не нажато
+0028                  00145 Fun1
+0028   0A8D           00146             incf       KeyWait,f
+0029   1F8D           00147             btfss      KeyWait,7
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+002A   2939           00148             goto       Edt         ; next 8xLED
+002B                  00149 Fun11
+002B   2001           00150             call       Inkey
+002C   0782           00151             addwf      PC,f
+002D   282B           00152             goto       Fun11       ; ждем отжатия клавиш
+002E   295F           00153             goto       WrtMem      ; запись в память
+002F   295F           00154             goto       WrtMem      ; запись в память
+0030   295F           00155             goto       WrtMem      ; запись в память
+                      00156 ;
+                      00157 ;=============================================
+                      00158 ; Перекодирование двоичного в код LCD
+                      00159 ;=============================================
+                      00160 ;
+0031                  00161 Bin2LCD
+0031   1003           00162             bcf        Status,0    ; clear the carry bit
+0032   3018           00163             movlw      .24
+0033   008E           00164             movwf      Count
+0034   0193           00165             clrf       LED3
+0035   0192           00166             clrf       LED2
+0036   0191           00167             clrf       LED1
+0037   0190           00168             clrf       LED0
+0038                  00169 loop16
+0038   0D9A           00170             rlf        TimerL,f
+0039   0D9B           00171             rlf        TimerM,f
+003A   0D9C           00172             rlf        TimerH,f
+003B   0D90           00173             rlf        LED0,f
+003C   0D91           00174             rlf        LED1,f
+003D   0D92           00175             rlf        LED2,f
+003E   0D93           00176             rlf        LED3,f
+                      00177 ;
+003F   0B8E           00178             decfsz     Count,f
+0040   285A           00179             goto       adjDEC
+                      00180 
+0041   0E13           00181             swapf      LED3,w
+0042   390F           00182             andlw      0Fh
+0043   0097           00183             movwf      LED7
+                      00184 
+0044   0813           00185             movfw      LED3
+0045   390F           00186             andlw      0Fh
+0046   0096           00187             movwf      LED6
+                      00188 
+0047   0E12           00189             swapf      LED2,w
+0048   390F           00190             andlw      0Fh
+0049   0095           00191             movwf      LED5
+                      00192 
+004A   0812           00193             movfw      LED2
+004B   390F           00194             andlw      0Fh
+004C   0094           00195             movwf      LED4
+                      00196 
+004D   0E11           00197             swapf      LED1,w
+004E   390F           00198             andlw      0Fh
+004F   0093           00199             movwf      LED3
+                      00200 
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0050   0811           00201             movfw      LED1
+0051   390F           00202             andlw      0Fh
+0052   0092           00203             movwf      LED2
+                      00204 
+0053   0E10           00205             swapf      LED0,w
+0054   390F           00206             andlw      0Fh
+0055   0091           00207             movwf      LED1
+                      00208 
+0056   0810           00209             movfw      LED0
+0057   390F           00210             andlw      0Fh
+0058   0090           00211             movwf      LED0
+                      00212 
+0059   0008           00213             return
+                      00214 ;
+005A                  00215 adjDEC
+005A   3010           00216             movlw      LED0
+005B   0084           00217             movwf      FSR
+005C   2067           00218             call       adjBCD
+                      00219 ;
+005D   3011           00220             movlw      LED1
+005E   0084           00221             movwf      FSR
+005F   2067           00222             call       adjBCD
+                      00223 ;
+0060   3012           00224             movlw      LED2
+0061   0084           00225             movwf      FSR
+0062   2067           00226             call       adjBCD
+                      00227 ;
+0063   3013           00228             movlw      LED3
+0064   0084           00229             movwf      FSR
+0065   2067           00230             call       adjBCD
+                      00231 ;
+0066   2838           00232             goto       loop16
+                      00233 ;
+0067                  00234 adjBCD
+0067   3003           00235             movlw      3
+0068   0700           00236             addwf      0,W
+0069   008F           00237             movwf      Count1
+006A   198F           00238             btfsc      Count1,3
+006B   0080           00239             movwf      0
+006C   3030           00240             movlw      30
+006D   0700           00241             addwf      0,W
+006E   008F           00242             movwf      Count1
+006F   1B8F           00243             btfsc      Count1,7
+0070   0080           00244             movwf      0
+                      00245 ;
+0071   3400           00246             retlw      0
+                      00247 ;
+                      00248 ;=============================================
+                      00249 ; Преобразование BCD -> 7 сегментный код
+                      00250 ;=============================================
+                      00251 
+0072                  00252 LCDTable
+0072   0782           00253             addwf      PC,F        ; W + PC -> PC
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0073   343F           00254             retlw      b'00111111' ; ..FEDCBA = '0'
+0074   3406           00255             retlw      b'00000110' ; .....CB. = '1'
+0075   345B           00256             retlw      b'01011011' ; .G.ED.BA = '2'
+0076   344F           00257             retlw      b'01001111' ; .G..DCBA = '3'
+0077   3466           00258             retlw      b'01100110' ; .GF..CB. = '4'
+0078   346D           00259             retlw      b'01101101' ; .GF.DC.A = '5'
+0079   347D           00260             retlw      b'01111101' ; .GFEDC.A = '6'
+007A   3407           00261             retlw      b'00000111' ; .....CBA = '7'
+007B   347F           00262             retlw      b'01111111' ; .GFEDCBA = '8'
+007C   346F           00263             retlw      b'01101111' ; .GF.DCBA = '9'
+007D   3471           00264             retlw      b'01110001' ; .GFE...A = 'F'
+                      00265 ;
+                      00266 ;=============================================
+                      00267 ;Main program
+                      00268 ;
+007E                  00269 Start
+007E   1683           00270             bsf        Status,RP0
+                      00271 
+007F   3010           00272             movlw      b'00010000' ; RA0..RA3 outputs
+0080   0085           00273             movwf      TrisA       ; RA4 input
+                      00274 
+0081   3000           00275             movlw      b'00000000' ; RB0..RB7 outputs
+0082   0086           00276             movwf      TrisB
+                      00277 
+0083   0064           00278             clrwdt                 ;
+0084   3027           00279             movlw      b'00100111' ; Prescaler -> Timer0,
+0085   0081           00280             movwf      OptionR     ; 1:256, rising edge
+0086   1283           00281             bcf        Status,RP0  ;
+                      00282 
+0087   018E           00283             clrf       Count       ; указатели
+0088   0199           00284             clrf       LEDIndex
+                      00285 
+0089   0190           00286             clrf       LED0        ; индикаторы
+008A   0191           00287             clrf       LED1
+008B   0192           00288             clrf       LED2
+008C   0193           00289             clrf       LED3
+008D   0194           00290             clrf       LED4
+008E   0195           00291             clrf       LED5
+008F   0196           00292             clrf       LED6
+0090   0197           00293             clrf       LED7
+                      00294 
+0091   019A           00295             clrf       TimerL      ; ячейки счета
+0092   019B           00296             clrf       TimerM
+0093   019C           00297             clrf       TimerH
+                      00298 
+                      00299 ;=============================================
+                      00300 ;Преобразование bin => BCD => код для индикаторов
+                      00301 ;
+0094                  00302 Go
+0094   1108           00303             bcf        EECon1,2    ; запрещение записи
+0095   3000           00304             movlw      0
+0096   0089           00305             movwf      EEAdr
+0097   1683           00306             bsf        Status,RP0
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0098   1408           00307             bsf        EECon1,0
+0099   1283           00308             bcf        Status,RP0  ;
+009A   0808           00309             movf       EEData,w
+009B   009F           00310             movwf      IF_H
+                      00311 
+009C   3001           00312             movlw      1
+009D   0089           00313             movwf      EEAdr
+009E   1683           00314             bsf        Status,RP0
+009F   1408           00315             bsf        EECon1,0
+00A0   1283           00316             bcf        Status,RP0  ;
+00A1   0808           00317             movf       EEData,w
+00A2   009E           00318             movwf      IF_M
+                      00319 
+00A3   3002           00320             movlw      2
+00A4   0089           00321             movwf      EEAdr
+00A5   1683           00322             bsf        Status,RP0
+00A6   1408           00323             bsf        EECon1,0
+00A7   1283           00324             bcf        Status,RP0  ;
+00A8   0808           00325             movf       EEData,w
+00A9   009D           00326             movwf      IF_L
+                      00327 
+00AA   2031           00328             call       Bin2LCD
+                      00329 ;
+                      00330 ;=============================================
+                      00331 ; Регистры LED0..LED7 заполнены значениями, готовимся
+                      00332 ; измерять и отображать
+                      00333 ;=============================================
+                      00334 ;
+00AB   018B           00335             clrf       IntCon      ; обнуление бита переполнения
+00AC   019C           00336             clrf       TimerH      ; старший байт измерения
+00AD   0181           00337             clrf       Timer0      ; собственно таймер
+00AE   0199           00338             clrf       LEDIndex    ; указатель цифры
+                      00339 ;
+00AF   303C           00340             movlw      .60         ; начальное значение счетчика
+00B0   008E           00341             movwf      Count       ; 60 -> Count
+                      00342 ;
+                      00343 ;=============================================
+                      00344 ; Начало измерения и индикации:  RA3 set input
+                      00345 ;=============================================
+                      00346 ;
+00B1   3000           00347             movlw      b'00000000' ; 0 во все порты
+00B2   0085           00348             movwf      PortA
+                      00349 ;
+00B3   1683           00350             bsf        Status,RP0
+00B4   3018           00351             movlw      b'00011000' ; RA0..RA2 output,RA3..RA4 input
+00B5   0085           00352             movwf      TrisA       ; RA4 input
+00B6   1283           00353             bcf        Status,RP0  ;
+                      00354 ;
+                      00355 ;=============================================
+                      00356 ; 7-step cycle of digits
+                      00357 ;=============================================
+                      00358 ;
+00B7   3000           00359 LEDCycle    movlw      b'00000000'
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00B8   0086           00360             movwf      PortB
+00B9   3010           00361             movlw      LED0
+00BA   0719           00362             addwf      LEDIndex,W  ; LED1 + LEDIndex -> W
+                      00363 
+00BB   0084           00364             movwf      FSR         ; W -> FSR
+00BC   0800           00365             movf       IndF,W      ; LED(0..6) -> W
+00BD   2072           00366             call       LCDTable    ; W -> семисегментный код
+                      00367 
+00BE   0098           00368             movwf      Temp        ; точка есть?
+00BF   3005           00369             movlw      5
+00C0   1503           00370             bsf        Status,ZF
+00C1   0219           00371             subwf      LEDIndex,W
+00C2   1D03           00372             btfss      Status,ZF
+00C3   28C5           00373             goto       NoDot
+00C4   1798           00374             bsf        Temp,7
+00C5   0818           00375 NoDot       movf       Temp,W
+00C6   0086           00376             movwf      PortB       ; вывод цифры в PortB
+                      00377 
+00C7   0819           00378             movf       LEDIndex,W  ; LEDIndex -> W
+00C8   0085           00379             movwf      PortA       ; вывод позиции в PortA
+                      00380 ;
+                      00381 ;=============================================
+                      00382 ; Проверка TMR0 на переполнение
+                      00383 ;=============================================
+                      00384 ;
+00C9   1D0B           00385             btfss      IntCon,2
+00CA   28CE           00386             goto       DoNothing
+00CB   0A9C           00387             incf       TimerH,F
+00CC   110B           00388             bcf        IntCon,2
+00CD   28D1           00389             goto       O_K
+00CE   0000           00390 DoNothing   nop
+00CF   0000           00391             nop
+00D0   0000           00392             nop
+                      00393 ;
+                      00394 ;=============================================
+                      00395 ; The first timing loop
+                      00396 ;=============================================
+00D1                  00397 O_K
+00D1   3043           00398             movlw      T1
+00D2   0098           00399             movwf      Temp
+00D3                  00400 Pause
+00D3   0B98           00401             decfsz     Temp,F
+00D4   28D3           00402             goto       Pause
+                      00403 
+                      00404 ;=============================================
+                      00405 ;
+00D5   0A99           00406             incf       LEDIndex,F
+00D6   3007           00407             movlw      7           ; is 7th?
+00D7   1103           00408             bcf        Status,ZF
+00D8   0219           00409             subwf      LEDIndex,W
+00D9   1D03           00410             btfss      Status,ZF
+00DA   28B7           00411             goto       LEDCycle    ; след. цифра
+00DB   0000           00412             nop
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00413 ;
+00DC   0199           00414             clrf       LEDIndex
+00DD   0B8E           00415             decfsz     Count,F
+00DE   28B7           00416             goto       LEDCycle    ; next 7xLED
+00DF   0000           00417             nop
+                      00418 
+                      00419 ;=============================================
+                      00420 ; The second timing loop
+                      00421 ;=============================================
+                      00422 
+00E0   30DD           00423             movlw      T2
+00E1   0098           00424             movwf      Temp
+                      00425 
+00E2   0B98           00426 EndPause    decfsz     Temp,F
+00E3   28E2           00427             goto       EndPause
+00E4   0000           00428             nop
+                      00429 
+                      00430 ;=============================================
+                      00431 ; Завершение измерения
+                      00432 ;=============================================
+00E5                  00433 Nx
+00E5   0103           00434             clrw
+00E6   0086           00435             movwf      PortB       ; RB0..RB7 = 0
+00E7   0085           00436             movwf      PortA       ; RA0..RA3 = 0
+                      00437 
+00E8   1683           00438             bsf        Status,RP0
+00E9   3010           00439             movlw      b'00010000'
+00EA   0085           00440             movwf      TrisA       ; RA4 input
+00EB   1283           00441             bcf        Status,RP0  ;
+00EC   0000           00442             nop
+00ED   0000           00443             nop
+                      00444 ;=============================================
+                      00445 ; Последняя проверка TMR0 на переполнение
+                      00446 ;=============================================
+00EE   1D0B           00447             btfss      IntCon,2
+00EF   28F2           00448             goto       Analyse
+00F0   110B           00449             bcf        IntCon,2
+00F1   0A9C           00450             incf       TimerH,F
+                      00451 ;=============================================
+                      00452 ; Анализ содержимого предварительного делителя
+                      00453 ;=============================================
+00F2                  00454 Analyse
+00F2   0000           00455             nop
+00F3   0801           00456             movf       Timer0,W    ; средний байт счетчика
+00F4   009B           00457             movwf      TimerM      ; TMR0 -> TimerM
+                      00458 
+00F5   019A           00459             clrf       TimerL
+00F6                  00460 CountIt
+00F6   0A9A           00461             incf       TimerL,F
+00F7   1585           00462             bsf        PortA,3     ; _| false impulz
+00F8   0000           00463             nop
+00F9   1185           00464             bcf        PortA,3     ;    |_
+00FA   0000           00465             nop
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+00FB   0801           00466             movf       Timer0,W    ; actual Timer0 -> W
+00FC   1103           00467             bcf        Status,ZF
+00FD   021B           00468             subwf      TimerM,W
+00FE   1903           00469             btfsc      Status,ZF
+00FF   28F6           00470             goto       CountIt
+0100   0A9A           00471             incf       TimerL,F
+0101   099A           00472             comf       TimerL,F
+0102   0A9A           00473             incf       TimerL,F
+0103   0A9A           00474             incf       TimerL,F    ; младший байт счетчика
+0104   2809           00475             goto       KeyQuery
+0105                  00476 minusIF
+0105   099D           00477             comf    IF_L,f
+0106   0A9D           00478             incf    IF_L,f
+0107   1903           00479             btfsc   Status,ZF
+0108   039E           00480             decf    IF_M,f
+0109   099E           00481             comf    IF_M,f
+010A   1903           00482             btfsc   Status,ZF
+010B   039F           00483             decf    IF_H,f
+010C   099F           00484             comf    IF_H,f
+                      00485 ;
+010D   081D           00486             movf    IF_L,w
+010E   079A           00487             addwf   TimerL,f
+010F   1C03           00488             btfss   Status,CF
+0110   2915           00489             goto    min11
+                      00490 
+0111   0A9B           00491             incf    TimerM,f
+0112   1D03           00492             btfss   Status,ZF
+0113   2915           00493             goto    min11
+                      00494 
+0114   0A9C           00495             incf    TimerH,f
+0115                  00496 min11
+0115   081E           00497             movf    IF_M,w
+0116   079B           00498             addwf   TimerM,f
+0117   1803           00499             btfsc   Status,CF
+0118   0A9C           00500             incf    TimerH,f
+0119   081F           00501             movf    IF_H,w
+011A   079C           00502             addwf   TimerH,f
+011B   1803           00503             btfsc   Status,CF   ; результат отрицательный?
+011C   2927           00504             goto    Go1         ; нет
+011D   1803           00505             btfsc   Status,CF   ; а не ноль?
+011E   2927           00506             goto    Go1         ; нет
+011F   099A           00507             comf    TimerL,f    ; преобразование
+0120   0A9A           00508             incf    TimerL,f
+0121   1903           00509             btfsc   Status,ZF
+0122   039B           00510             decf    TimerM,f
+0123   099B           00511             comf    TimerM,f    ; отрицательного
+0124   1903           00512             btfsc   Status,ZF
+0125   039C           00513             decf    TimerH,f
+0126   099C           00514             comf    TimerH,f    ; результата
+0127                  00515 Go1
+0127   3000           00516             movlw      0
+0128   008D           00517             movwf      KeyWait
+0129   2894           00518             goto       Go
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+012A                  00519 plusIF
+012A   081D           00520             movf    IF_L,w
+012B   079A           00521             addwf   TimerL,f
+012C   1C03           00522             btfss   Status,CF
+012D   2932           00523             goto    pl11
+                      00524 
+012E   0A9B           00525             incf    TimerM,f
+012F   1D03           00526             btfss   Status,ZF
+0130   2932           00527             goto    pl11
+                      00528 
+0131   0A9C           00529             incf    TimerH,f
+0132                  00530 pl11
+0132   081E           00531             movf    IF_M,w
+0133   079B           00532             addwf   TimerM,f
+0134   1803           00533             btfsc   Status,CF
+0135   0A9C           00534             incf    TimerH,f
+0136   081F           00535             movf    IF_H,w
+0137   079C           00536             addwf   TimerH,f
+0138   2927           00537             goto    Go1
+0139                  00538 Edt
+0139   018B           00539             clrf       IntCon      ; clear overflow bite
+013A   300A           00540             movlw      0ah
+013B   0097           00541             movwf      LED7        ; признак режима
+                      00542 ;=============================================
+                      00543 ; 8-step cycle of digits
+                      00544 ;=============================================
+                      00545 ;
+013C   3000           00546             movlw      b'00000000' ;
+013D   0085           00547             movwf      PortA
+                      00548 ;
+013E   1683           00549             bsf        Status,RP0
+013F   3010           00550             movlw      b'00010000' ; RA0..RA3 output,RA4 input
+0140   0085           00551             movwf      TrisA       ;
+0141   1283           00552             bcf        Status,RP0  ;
+0142   0199           00553             clrf       LEDIndex    ; указатель цифры
+0143                  00554 EdtCycle
+0143   3010           00555             movlw      LED0
+0144   0719           00556             addwf      LEDIndex,W  ; LED1 + LEDIndex -> W
+                      00557 
+0145   0084           00558             movwf      FSR         ; W -> FSR
+0146   0800           00559             movf       IndF,W      ; LED(0..6) -> W
+0147   2072           00560             call       LCDTable    ; W -> семисегментный код
+                      00561 
+0148   0098           00562             movwf      Temp        ; точка есть?
+0149   3005           00563             movlw      5
+014A   1503           00564             bsf        Status,ZF
+014B   0219           00565             subwf      LEDIndex,W
+014C   1D03           00566             btfss      Status,ZF
+014D   294F           00567             goto       NoDot1
+014E   1798           00568             bsf        Temp,7
+014F   0818           00569 NoDot1      movf       Temp,W
+0150   0086           00570             movwf      PortB       ; вывод цифры в PortB
+                      00571 
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0151   0819           00572             movf       LEDIndex,W  ; LEDIndex -> W
+0152   0085           00573             movwf      PortA       ; вывод позиции в PortA
+                      00574 ;
+                      00575 ;=============================================
+                      00576 ; Timing loop
+                      00577 ;=============================================
+0153   30FF           00578             movlw      .255
+0154   0098           00579             movwf      Temp
+0155                  00580 Pause1
+0155   0B98           00581             decfsz     Temp,F
+0156   2955           00582             goto       Pause1
+                      00583 
+                      00584 ;=============================================
+                      00585 ;
+0157   0A99           00586             incf       LEDIndex,F
+0158   1D99           00587             btfss      LEDIndex,3
+0159   2943           00588             goto       EdtCycle    ; след. цифра
+                      00589 ;
+015A   0199           00590             clrf       LEDIndex
+015B   2822           00591             goto       FunOff
+                      00592 ;
+015C                  00593 NextFun
+015C   3000           00594             movlw      0           ; выход из цикла редактирования
+015D   008D           00595             movwf      KeyWait
+015E   2939           00596             goto       Edt         ; next 8xLED
+                      00597 ;
+015F                  00598 WrtMem      ;      запись в EEPROM
+                      00599 
+015F   3000           00600             movlw      0
+0160   008B           00601             movwf      IntCon      ; запрещение прерываний
+0161   0089           00602             movwf      EEAdr
+0162   081F           00603             movf       IF_H,w
+0163   0088           00604             movwf      EEData
+0164   1683           00605             bsf        Status,RP0
+0165   1508           00606             bsf        EECon1,2    ; разрешение записи
+0166   3055           00607             movlw      055h
+0167   0089           00608             movwf      EECon2
+0168   30AA           00609             movlw      0AAh
+0169   0089           00610             movwf      EECon2
+016A   1488           00611             bsf        EECon1,1
+016B                  00612 wr1
+016B   1E08           00613             btfss      EECon1,4
+016C   296B           00614             goto       wr1
+016D   1208           00615             bcf        EECon1,4
+016E   1283           00616             bcf        Status,RP0
+                      00617 
+016F   3001           00618             movlw      1
+0170   0089           00619             movwf      EEAdr
+0171   081E           00620             movf       IF_M,w
+0172   0088           00621             movwf      EEData
+0173   1683           00622             bsf        Status,RP0
+0174   1508           00623             bsf        EECon1,2    ; разрешение записи
+0175   3055           00624             movlw      055h
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0176   0089           00625             movwf      EECon2
+0177   30AA           00626             movlw      0AAh
+0178   0089           00627             movwf      EECon2
+0179   1488           00628             bsf        EECon1,1
+017A                  00629 wr2
+017A   1E08           00630             btfss      EECon1,4
+017B   297A           00631             goto       wr2
+017C   1208           00632             bcf        EECon1,4
+017D   1283           00633             bcf        Status,RP0
+                      00634 
+017E   3002           00635             movlw      2
+017F   0089           00636             movwf      EEAdr
+0180   081D           00637             movf       IF_L,w
+0181   0088           00638             movwf      EEData
+0182   1683           00639             bsf        Status,RP0
+0183   1508           00640             bsf        EECon1,2    ; разрешение записи
+0184   3055           00641             movlw      055h
+0185   0089           00642             movwf      EECon2
+0186   30AA           00643             movlw      0AAh
+0187   0089           00644             movwf      EECon2
+0188   1488           00645             bsf        EECon1,1
+0189                  00646 wr3
+0189   1E08           00647             btfss      EECon1,4
+018A   2989           00648             goto       wr3
+018B   1208           00649             bcf        EECon1,4
+018C   1283           00650             bcf        Status,RP0
+                      00651 ;
+018D   2927           00652             goto       Go1
+                      00653 ;
+                      00654 ;=============================================
+                      00655             end
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+Analyse                           000000F2
+Bin2LCD                           00000031
+CF                                00000000
+Count                             0000000E
+Count1                            0000000F
+CountIt                           000000F6
+DC                                00000001
+DoNothing                         000000CE
+EEAdr                             00000009
+EECon1                            00000008
+EECon2                            00000009
+EEData                            00000008
+Edt                               00000139
+EdtCycle                          00000143
+EndPause                          000000E2
+F                                 00000001
+FSR                               00000004
+Fun                               0000000F
+Fun1                              00000028
+Fun11                             0000002B
+FunOff                            00000022
+Function                          00000014
+Go                                00000094
+Go1                               00000127
+IF_H                              0000001F
+IF_L                              0000001D
+IF_M                              0000001E
+IndF                              00000000
+Inkey                             00000001
+IntCon                            0000000B
+KeyBuf                            0000000C
+KeyQuery                          00000009
+KeyWait                           0000000D
+LCDTable                          00000072
+LED0                              00000010
+LED1                              00000011
+LED2                              00000012
+LED3                              00000013
+LED4                              00000014
+LED5                              00000015
+LED6                              00000016
+LED7                              00000017
+LEDCycle                          000000B7
+LEDIndex                          00000019
+NextFun                           0000015C
+NoDot                             000000C5
+NoDot1                            0000014F
+Nx                                000000E5
+O_K                               000000D1
+OptionR                           00000001
+PC                                00000002
+Pause                             000000D3
+Pause1                            00000155
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+PortA                             00000005
+PortB                             00000006
+RP0                               00000005
+Start                             0000007E
+Status                            00000003
+T1                                00000043
+T2                                000000DD
+Temp                              00000018
+Timer0                            00000001
+TimerH                            0000001C
+TimerL                            0000001A
+TimerM                            0000001B
+TrisA                             00000005
+TrisB                             00000006
+W                                 00000000
+WrtMem                            0000015F
+ZF                                00000002
+__16F84                           00000001
+adjBCD                            00000067
+adjDEC                            0000005A
+loop16                            00000038
+min11                             00000115
+minusIF                           00000105
+pl11                              00000132
+plusIF                            0000012A
+wr1                               0000016B
+wr2                               0000017A
+wr3                               00000189
+
+
+MEMORY USAGE MAP ('X' = Used,  '-' = Unused)
+
+0000 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0040 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0080 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+00C0 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0140 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX
+0180 : XXXXXXXXXXXXXX-- ---------------- ---------------- ----------------
+2000 : -------X-------- ---------------- ---------------- ----------------
+2100 : XXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXX XXXXXXXXXXXX---- ----------------
+
+All other memory blocks unused.
+
+Program Memory Words Used:   398
+Program Memory Words Free:   626
+
+
+MPASM  5.03                      DIGISCAL.ASM   5-7-2011  18:52:43         PAGE 16
+
+
+
+
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+

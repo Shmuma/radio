@@ -1,0 +1,655 @@
+,,,;=============================================
+,,,; DigiScal.asm
+,,,; Цифровая шкала с возможностью
+,,,; записи промежуточной частоты
+,,,; Денисов А.Ю. Тамбов 1999
+,,,; Исправлена ошибка в расчете частоты 16.11.2000
+,,,;=============================================
+,,,;
+,,,        LIST    p=16F84
+00002007,3FF1,,       __CONFIG 03FF1H
+,,,;=============================================
+,,,                                   ; значения задержки
+,,,                                   ; могут быть от 1 до 255
+,,,T1          equ       .67          ; грубо
+,,,T2          equ       .221         ; точно
+,,,                                   ; (подобрано для 4000 kHz)
+,,,;=============================================
+,,,;
+,,,IndF        equ        00h         ; Доступ к памяти через FSR
+,,,Timer0      equ        01h         ; TMR0
+,,,OptionR     equ        01h         ; Option (RP0=1)
+,,,PC          equ        02h         ; Счетчик команд
+,,,Status      equ        03h         ; Status
+,,,FSR         equ        04h         ; Регистр косвенной адресации
+,,,PortA       equ        05h         ; Port A
+,,,TrisA       equ        05h         ; Tris A - RP0=1
+,,,PortB       equ        06h         ; Port B
+,,,TrisB       equ        06h         ; Tris B - RP0=1
+,,,EEData      equ        08h         ; EEPROM Data
+,,,EECon1      equ        08h         ; EECON1 - RP0=1
+,,,EEAdr       equ        09h         ; EEPROM Address
+,,,EECon2      equ        09h         ; EECON2 - RP0=1
+,,,
+,,,IntCon      equ        0Bh         ;
+,,,;
+,,,KeyBuf      equ        0Ch         ; буфер клавиатуры
+,,,KeyWait     equ        0Dh         ; ожидание клавиатуры
+,,,Count       equ        0Eh         ; временный счетчик
+,,,Count1      equ        0Fh         ; еще один
+,,,;
+,,,LED0        equ       010h         ;
+,,,LED1        equ       011h         ;
+,,,LED2        equ       012h         ;
+,,,LED3        equ       013h         ; ячейки
+,,,LED4        equ       014h         ; индикатора
+,,,LED5        equ       015h         ;
+,,,LED6        equ       016h         ;
+,,,LED7        equ       017h         ;
+,,,;
+,,,Temp        equ       018h         ; временный регистр
+,,,LEDIndex    equ       019h         ; указатель LED
+,,,
+,,,TimerL      equ       01ah         ; младший байт счетчика частоты
+,,,TimerM      equ       01bh         ; средний байт счетчика частоты
+,,,TimerH      equ       01ch         ; старший байт счетчика частоты
+,,,
+,,,IF_L        equ       01dh         ; младший байт ПЧ
+,,,IF_M        equ       01eh         ; средний байт ПЧ
+,,,IF_H        equ       01fh         ; старший байт ПЧ
+,,,;
+,,,;=============================================
+,,,;                                    Результат в
+,,,W           equ        0           ; аккумуляторе
+,,,F           equ        1           ; регистре
+,,,;
+,,,;=============================================
+,,,; Flag bits:
+,,,CF          equ        0           ; Carry
+,,,DC          equ        1           ; DC
+,,,ZF          equ        2           ; Zero
+,,,;
+,,,RP0         equ        5
+,,,;=============================================
+00002100,,,            org        2100h
+,,,
+,,,            ; частота ПЧ по умолчанию
+00002100,0008 0064 0070,,            DE         008h,064h,070h   ; 5.5 мгц
+,,,;
+00002103,0000 0000 0000,,            DE         0h,0h,0h
+00002106,0043 006F 0070,,            DE      "Copyright (C) 1999 Alexander Y Denisov"
+,,,
+,,,;
+,,,;=============================================
+,,,;
+,,,            org        0
+00000000,287E,,            goto    Start
+,,,;
+,,,;=============================================
+,,,; Проверка клавиатуры
+,,,;=============================================
+,,,;
+00000001,,Inkey,Inkey
+00000001,0185,,            clrf       PortA       ; RA0..RA3 = 0
+,,,
+00000002,1683,,            bsf        Status,RP0
+00000003,3013,,            movlw      b'00010011'
+00000004,0085,,            movwf      TrisA       ; RA0,RA1,RA4 input
+00000005,1283,,            bcf        Status,RP0  ;
+,,,
+00000006,0805,,            movf       PortA,w
+00000007,3903,,            andlw      b'00000011'
+00000008,0008,,            return
+,,,;
+,,,;=============================================
+00000009,,KeyQuery,KeyQuery    ; опрос клавиатуры
+00000009,2001,,            call       Inkey
+0000000A,0782,,            addwf      PC,f
+0000000B,280F,,            goto       Fun         ; режим установки ПЧ
+0000000C,292A,,            goto       plusIF      ; плюс ПЧ
+0000000D,2905,,            goto       minusIF     ; минус ПЧ
+0000000E,2927,,            goto       Go1         ; и все по новой.
+,,,;
+0000000F,,Fun,Fun
+0000000F,0A8D,,            incf       KeyWait,f
+00000010,1D8D,,            btfss      KeyWait,3
+00000011,2894,,            goto       Go
+,,,
+00000012,3000,,            movlw      0
+00000013,008D,,            movwf      KeyWait
+00000014,,Function,Function
+00000014,2001,,            call       Inkey
+00000015,0782,,            addwf      PC,f
+00000016,2814,,            goto       Function    ; ждем отжатия клавиш
+00000017,0000,,            nop
+00000018,0000,,            nop
+00000019,0000,,            nop
+0000001A,081A,,            movf       TimerL,w
+0000001B,009D,,            movwf      IF_L
+0000001C,081B,,            movf       TimerM,w
+0000001D,009E,,            movwf      IF_M
+0000001E,081C,,            movf       TimerH,w
+0000001F,009F,,            movwf      IF_H
+00000020,2031,,            call       Bin2LCD
+00000021,2939,,            goto       Edt
+,,,;
+,,,;=============================================
+,,,;
+00000022,,FunOff,FunOff
+00000022,2001,,            call       Inkey
+00000023,0782,,            addwf      PC,f
+00000024,2828,,            goto       Fun1
+00000025,295C,,            goto       NextFun     ; ничего не нажато
+00000026,295C,,            goto       NextFun     ; ничего не нажато
+00000027,295C,,            goto       NextFun     ; ничего не нажато
+00000028,,Fun1,Fun1
+00000028,0A8D,,            incf       KeyWait,f
+00000029,1F8D,,            btfss      KeyWait,7
+0000002A,2939,,            goto       Edt         ; next 8xLED
+0000002B,,Fun11,Fun11
+0000002B,2001,,            call       Inkey
+0000002C,0782,,            addwf      PC,f
+0000002D,282B,,            goto       Fun11       ; ждем отжатия клавиш
+0000002E,295F,,            goto       WrtMem      ; запись в память
+0000002F,295F,,            goto       WrtMem      ; запись в память
+00000030,295F,,            goto       WrtMem      ; запись в память
+,,,;
+,,,;=============================================
+,,,; Перекодирование двоичного в код LCD
+,,,;=============================================
+,,,;
+00000031,,Bin2LCD,Bin2LCD
+00000031,1003,,            bcf        Status,0    ; clear the carry bit
+00000032,3018,,            movlw      .24
+00000033,008E,,            movwf      Count
+00000034,0193,,            clrf       LED3
+00000035,0192,,            clrf       LED2
+00000036,0191,,            clrf       LED1
+00000037,0190,,            clrf       LED0
+00000038,,loop16,loop16
+00000038,0D9A,,            rlf        TimerL,f
+00000039,0D9B,,            rlf        TimerM,f
+0000003A,0D9C,,            rlf        TimerH,f
+0000003B,0D90,,            rlf        LED0,f
+0000003C,0D91,,            rlf        LED1,f
+0000003D,0D92,,            rlf        LED2,f
+0000003E,0D93,,            rlf        LED3,f
+,,,;
+0000003F,0B8E,,            decfsz     Count,f
+00000040,285A,,            goto       adjDEC
+,,,
+00000041,0E13,,            swapf      LED3,w
+00000042,390F,,            andlw      0Fh
+00000043,0097,,            movwf      LED7
+,,,
+00000044,0813,,            movfw      LED3
+00000045,390F,,            andlw      0Fh
+00000046,0096,,            movwf      LED6
+,,,
+00000047,0E12,,            swapf      LED2,w
+00000048,390F,,            andlw      0Fh
+00000049,0095,,            movwf      LED5
+,,,
+0000004A,0812,,            movfw      LED2
+0000004B,390F,,            andlw      0Fh
+0000004C,0094,,            movwf      LED4
+,,,
+0000004D,0E11,,            swapf      LED1,w
+0000004E,390F,,            andlw      0Fh
+0000004F,0093,,            movwf      LED3
+,,,
+00000050,0811,,            movfw      LED1
+00000051,390F,,            andlw      0Fh
+00000052,0092,,            movwf      LED2
+,,,
+00000053,0E10,,            swapf      LED0,w
+00000054,390F,,            andlw      0Fh
+00000055,0091,,            movwf      LED1
+,,,
+00000056,0810,,            movfw      LED0
+00000057,390F,,            andlw      0Fh
+00000058,0090,,            movwf      LED0
+,,,
+00000059,0008,,            return
+,,,;
+0000005A,,adjDEC,adjDEC
+0000005A,3010,,            movlw      LED0
+0000005B,0084,,            movwf      FSR
+0000005C,2067,,            call       adjBCD
+,,,;
+0000005D,3011,,            movlw      LED1
+0000005E,0084,,            movwf      FSR
+0000005F,2067,,            call       adjBCD
+,,,;
+00000060,3012,,            movlw      LED2
+00000061,0084,,            movwf      FSR
+00000062,2067,,            call       adjBCD
+,,,;
+00000063,3013,,            movlw      LED3
+00000064,0084,,            movwf      FSR
+00000065,2067,,            call       adjBCD
+,,,;
+00000066,2838,,            goto       loop16
+,,,;
+00000067,,adjBCD,adjBCD
+00000067,3003,,            movlw      3
+00000068,0700,,            addwf      0,W
+00000069,008F,,            movwf      Count1
+0000006A,198F,,            btfsc      Count1,3
+0000006B,0080,,            movwf      0
+0000006C,3030,,            movlw      30
+0000006D,0700,,            addwf      0,W
+0000006E,008F,,            movwf      Count1
+0000006F,1B8F,,            btfsc      Count1,7
+00000070,0080,,            movwf      0
+,,,;
+00000071,3400,,            retlw      0
+,,,;
+,,,;=============================================
+,,,; Преобразование BCD -> 7 сегментный код
+,,,;=============================================
+,,,
+00000072,,LCDTable,LCDTable
+00000072,0782,,            addwf      PC,F        ; W + PC -> PC
+00000073,343F,,            retlw      b'00111111' ; ..FEDCBA = '0'
+00000074,3406,,            retlw      b'00000110' ; .....CB. = '1'
+00000075,345B,,            retlw      b'01011011' ; .G.ED.BA = '2'
+00000076,344F,,            retlw      b'01001111' ; .G..DCBA = '3'
+00000077,3466,,            retlw      b'01100110' ; .GF..CB. = '4'
+00000078,346D,,            retlw      b'01101101' ; .GF.DC.A = '5'
+00000079,347D,,            retlw      b'01111101' ; .GFEDC.A = '6'
+0000007A,3407,,            retlw      b'00000111' ; .....CBA = '7'
+0000007B,347F,,            retlw      b'01111111' ; .GFEDCBA = '8'
+0000007C,346F,,            retlw      b'01101111' ; .GF.DCBA = '9'
+0000007D,3471,,            retlw      b'01110001' ; .GFE...A = 'F'
+,,,;
+,,,;=============================================
+,,,;Main program
+,,,;
+0000007E,,Start,Start
+0000007E,1683,,            bsf        Status,RP0
+,,,
+0000007F,3010,,            movlw      b'00010000' ; RA0..RA3 outputs
+00000080,0085,,            movwf      TrisA       ; RA4 input
+,,,
+00000081,3000,,            movlw      b'00000000' ; RB0..RB7 outputs
+00000082,0086,,            movwf      TrisB
+,,,
+00000083,0064,,            clrwdt                 ;
+00000084,3027,,            movlw      b'00100111' ; Prescaler -> Timer0,
+00000085,0081,,            movwf      OptionR     ; 1:256, rising edge
+00000086,1283,,            bcf        Status,RP0  ;
+,,,
+00000087,018E,,            clrf       Count       ; указатели
+00000088,0199,,            clrf       LEDIndex
+,,,
+00000089,0190,,            clrf       LED0        ; индикаторы
+0000008A,0191,,            clrf       LED1
+0000008B,0192,,            clrf       LED2
+0000008C,0193,,            clrf       LED3
+0000008D,0194,,            clrf       LED4
+0000008E,0195,,            clrf       LED5
+0000008F,0196,,            clrf       LED6
+00000090,0197,,            clrf       LED7
+,,,
+00000091,019A,,            clrf       TimerL      ; ячейки счета
+00000092,019B,,            clrf       TimerM
+00000093,019C,,            clrf       TimerH
+,,,
+,,,;=============================================
+,,,;Преобразование bin => BCD => код для индикаторов
+,,,;
+00000094,,Go,Go
+00000094,1108,,            bcf        EECon1,2    ; запрещение записи
+00000095,3000,,            movlw      0
+00000096,0089,,            movwf      EEAdr
+00000097,1683,,            bsf        Status,RP0
+00000098,1408,,            bsf        EECon1,0
+00000099,1283,,            bcf        Status,RP0  ;
+0000009A,0808,,            movf       EEData,w
+0000009B,009F,,            movwf      IF_H
+,,,
+0000009C,3001,,            movlw      1
+0000009D,0089,,            movwf      EEAdr
+0000009E,1683,,            bsf        Status,RP0
+0000009F,1408,,            bsf        EECon1,0
+000000A0,1283,,            bcf        Status,RP0  ;
+000000A1,0808,,            movf       EEData,w
+000000A2,009E,,            movwf      IF_M
+,,,
+000000A3,3002,,            movlw      2
+000000A4,0089,,            movwf      EEAdr
+000000A5,1683,,            bsf        Status,RP0
+000000A6,1408,,            bsf        EECon1,0
+000000A7,1283,,            bcf        Status,RP0  ;
+000000A8,0808,,            movf       EEData,w
+000000A9,009D,,            movwf      IF_L
+,,,
+000000AA,2031,,            call       Bin2LCD
+,,,;
+,,,;=============================================
+,,,; Регистры LED0..LED7 заполнены значениями, готовимся
+,,,; измерять и отображать
+,,,;=============================================
+,,,;
+000000AB,018B,,            clrf       IntCon      ; обнуление бита переполнения
+000000AC,019C,,            clrf       TimerH      ; старший байт измерения
+000000AD,0181,,            clrf       Timer0      ; собственно таймер
+000000AE,0199,,            clrf       LEDIndex    ; указатель цифры
+,,,;
+000000AF,303C,,            movlw      .60         ; начальное значение счетчика
+000000B0,008E,,            movwf      Count       ; 60 -> Count
+,,,;
+,,,;=============================================
+,,,; Начало измерения и индикации:  RA3 set input
+,,,;=============================================
+,,,;
+000000B1,3000,,            movlw      b'00000000' ; 0 во все порты
+000000B2,0085,,            movwf      PortA
+,,,;
+000000B3,1683,,            bsf        Status,RP0
+000000B4,3018,,            movlw      b'00011000' ; RA0..RA2 output,RA3..RA4 input
+000000B5,0085,,            movwf      TrisA       ; RA4 input
+000000B6,1283,,            bcf        Status,RP0  ;
+,,,;
+,,,;=============================================
+,,,; 7-step cycle of digits
+,,,;=============================================
+,,,;
+000000B7,3000,LEDCycle,LEDCycle    movlw      b'00000000'
+000000B8,0086,,            movwf      PortB
+000000B9,3010,,            movlw      LED0
+000000BA,0719,,            addwf      LEDIndex,W  ; LED1 + LEDIndex -> W
+,,,
+000000BB,0084,,            movwf      FSR         ; W -> FSR
+000000BC,0800,,            movf       IndF,W      ; LED(0..6) -> W
+000000BD,2072,,            call       LCDTable    ; W -> семисегментный код
+,,,
+000000BE,0098,,            movwf      Temp        ; точка есть?
+000000BF,3005,,            movlw      5
+000000C0,1503,,            bsf        Status,ZF
+000000C1,0219,,            subwf      LEDIndex,W
+000000C2,1D03,,            btfss      Status,ZF
+000000C3,28C5,,            goto       NoDot
+000000C4,1798,,            bsf        Temp,7
+000000C5,0818,NoDot,NoDot       movf       Temp,W
+000000C6,0086,,            movwf      PortB       ; вывод цифры в PortB
+,,,
+000000C7,0819,,            movf       LEDIndex,W  ; LEDIndex -> W
+000000C8,0085,,            movwf      PortA       ; вывод позиции в PortA
+,,,;
+,,,;=============================================
+,,,; Проверка TMR0 на переполнение
+,,,;=============================================
+,,,;
+000000C9,1D0B,,            btfss      IntCon,2
+000000CA,28CE,,            goto       DoNothing
+000000CB,0A9C,,            incf       TimerH,F
+000000CC,110B,,            bcf        IntCon,2
+000000CD,28D1,,            goto       O_K
+000000CE,0000,DoNothing,DoNothing   nop
+000000CF,0000,,            nop
+000000D0,0000,,            nop
+,,,;
+,,,;=============================================
+,,,; The first timing loop
+,,,;=============================================
+000000D1,,O_K,O_K
+000000D1,3043,,            movlw      T1
+000000D2,0098,,            movwf      Temp
+000000D3,,Pause,Pause
+000000D3,0B98,,            decfsz     Temp,F
+000000D4,28D3,,            goto       Pause
+,,,
+,,,;=============================================
+,,,;
+000000D5,0A99,,            incf       LEDIndex,F
+000000D6,3007,,            movlw      7           ; is 7th?
+000000D7,1103,,            bcf        Status,ZF
+000000D8,0219,,            subwf      LEDIndex,W
+000000D9,1D03,,            btfss      Status,ZF
+000000DA,28B7,,            goto       LEDCycle    ; след. цифра
+000000DB,0000,,            nop
+,,,;
+000000DC,0199,,            clrf       LEDIndex
+000000DD,0B8E,,            decfsz     Count,F
+000000DE,28B7,,            goto       LEDCycle    ; next 7xLED
+000000DF,0000,,            nop
+,,,
+,,,;=============================================
+,,,; The second timing loop
+,,,;=============================================
+,,,
+000000E0,30DD,,            movlw      T2
+000000E1,0098,,            movwf      Temp
+,,,
+000000E2,0B98,EndPause,EndPause    decfsz     Temp,F
+000000E3,28E2,,            goto       EndPause
+000000E4,0000,,            nop
+,,,
+,,,;=============================================
+,,,; Завершение измерения
+,,,;=============================================
+000000E5,,Nx,Nx
+000000E5,0103,,            clrw
+000000E6,0086,,            movwf      PortB       ; RB0..RB7 = 0
+000000E7,0085,,            movwf      PortA       ; RA0..RA3 = 0
+,,,
+000000E8,1683,,            bsf        Status,RP0
+000000E9,3010,,            movlw      b'00010000'
+000000EA,0085,,            movwf      TrisA       ; RA4 input
+000000EB,1283,,            bcf        Status,RP0  ;
+000000EC,0000,,            nop
+000000ED,0000,,            nop
+,,,;=============================================
+,,,; Последняя проверка TMR0 на переполнение
+,,,;=============================================
+000000EE,1D0B,,            btfss      IntCon,2
+000000EF,28F2,,            goto       Analyse
+000000F0,110B,,            bcf        IntCon,2
+000000F1,0A9C,,            incf       TimerH,F
+,,,;=============================================
+,,,; Анализ содержимого предварительного делителя
+,,,;=============================================
+000000F2,,Analyse,Analyse
+000000F2,0000,,            nop
+000000F3,0801,,            movf       Timer0,W    ; средний байт счетчика
+000000F4,009B,,            movwf      TimerM      ; TMR0 -> TimerM
+,,,
+000000F5,019A,,            clrf       TimerL
+000000F6,,CountIt,CountIt
+000000F6,0A9A,,            incf       TimerL,F
+000000F7,1585,,            bsf        PortA,3     ; _| false impulz
+000000F8,0000,,            nop
+000000F9,1185,,            bcf        PortA,3     ;    |_
+000000FA,0000,,            nop
+000000FB,0801,,            movf       Timer0,W    ; actual Timer0 -> W
+000000FC,1103,,            bcf        Status,ZF
+000000FD,021B,,            subwf      TimerM,W
+000000FE,1903,,            btfsc      Status,ZF
+000000FF,28F6,,            goto       CountIt
+00000100,0A9A,,            incf       TimerL,F
+00000101,099A,,            comf       TimerL,F
+00000102,0A9A,,            incf       TimerL,F
+00000103,0A9A,,            incf       TimerL,F    ; младший байт счетчика
+00000104,2809,,            goto       KeyQuery
+00000105,,minusIF,minusIF
+00000105,099D,,            comf    IF_L,f
+00000106,0A9D,,            incf    IF_L,f
+00000107,1903,,            btfsc   Status,ZF
+00000108,039E,,            decf    IF_M,f
+00000109,099E,,            comf    IF_M,f
+0000010A,1903,,            btfsc   Status,ZF
+0000010B,039F,,            decf    IF_H,f
+0000010C,099F,,            comf    IF_H,f
+,,,;
+0000010D,081D,,            movf    IF_L,w
+0000010E,079A,,            addwf   TimerL,f
+0000010F,1C03,,            btfss   Status,CF
+00000110,2915,,            goto    min11
+,,,
+00000111,0A9B,,            incf    TimerM,f
+00000112,1D03,,            btfss   Status,ZF
+00000113,2915,,            goto    min11
+,,,
+00000114,0A9C,,            incf    TimerH,f
+00000115,,min11,min11
+00000115,081E,,            movf    IF_M,w
+00000116,079B,,            addwf   TimerM,f
+00000117,1803,,            btfsc   Status,CF
+00000118,0A9C,,            incf    TimerH,f
+00000119,081F,,            movf    IF_H,w
+0000011A,079C,,            addwf   TimerH,f
+0000011B,1803,,            btfsc   Status,CF   ; результат отрицательный?
+0000011C,2927,,            goto    Go1         ; нет
+0000011D,1803,,            btfsc   Status,CF   ; а не ноль?
+0000011E,2927,,            goto    Go1         ; нет
+0000011F,099A,,            comf    TimerL,f    ; преобразование
+00000120,0A9A,,            incf    TimerL,f
+00000121,1903,,            btfsc   Status,ZF
+00000122,039B,,            decf    TimerM,f
+00000123,099B,,            comf    TimerM,f    ; отрицательного
+00000124,1903,,            btfsc   Status,ZF
+00000125,039C,,            decf    TimerH,f
+00000126,099C,,            comf    TimerH,f    ; результата
+00000127,,Go1,Go1
+00000127,3000,,            movlw      0
+00000128,008D,,            movwf      KeyWait
+00000129,2894,,            goto       Go
+0000012A,,plusIF,plusIF
+0000012A,081D,,            movf    IF_L,w
+0000012B,079A,,            addwf   TimerL,f
+0000012C,1C03,,            btfss   Status,CF
+0000012D,2932,,            goto    pl11
+,,,
+0000012E,0A9B,,            incf    TimerM,f
+0000012F,1D03,,            btfss   Status,ZF
+00000130,2932,,            goto    pl11
+,,,
+00000131,0A9C,,            incf    TimerH,f
+00000132,,pl11,pl11
+00000132,081E,,            movf    IF_M,w
+00000133,079B,,            addwf   TimerM,f
+00000134,1803,,            btfsc   Status,CF
+00000135,0A9C,,            incf    TimerH,f
+00000136,081F,,            movf    IF_H,w
+00000137,079C,,            addwf   TimerH,f
+00000138,2927,,            goto    Go1
+00000139,,Edt,Edt
+00000139,018B,,            clrf       IntCon      ; clear overflow bite
+0000013A,300A,,            movlw      0ah
+0000013B,0097,,            movwf      LED7        ; признак режима
+,,,;=============================================
+,,,; 8-step cycle of digits
+,,,;=============================================
+,,,;
+0000013C,3000,,            movlw      b'00000000' ;
+0000013D,0085,,            movwf      PortA
+,,,;
+0000013E,1683,,            bsf        Status,RP0
+0000013F,3010,,            movlw      b'00010000' ; RA0..RA3 output,RA4 input
+00000140,0085,,            movwf      TrisA       ;
+00000141,1283,,            bcf        Status,RP0  ;
+00000142,0199,,            clrf       LEDIndex    ; указатель цифры
+00000143,,EdtCycle,EdtCycle
+00000143,3010,,            movlw      LED0
+00000144,0719,,            addwf      LEDIndex,W  ; LED1 + LEDIndex -> W
+,,,
+00000145,0084,,            movwf      FSR         ; W -> FSR
+00000146,0800,,            movf       IndF,W      ; LED(0..6) -> W
+00000147,2072,,            call       LCDTable    ; W -> семисегментный код
+,,,
+00000148,0098,,            movwf      Temp        ; точка есть?
+00000149,3005,,            movlw      5
+0000014A,1503,,            bsf        Status,ZF
+0000014B,0219,,            subwf      LEDIndex,W
+0000014C,1D03,,            btfss      Status,ZF
+0000014D,294F,,            goto       NoDot1
+0000014E,1798,,            bsf        Temp,7
+0000014F,0818,NoDot1,NoDot1      movf       Temp,W
+00000150,0086,,            movwf      PortB       ; вывод цифры в PortB
+,,,
+00000151,0819,,            movf       LEDIndex,W  ; LEDIndex -> W
+00000152,0085,,            movwf      PortA       ; вывод позиции в PortA
+,,,;
+,,,;=============================================
+,,,; Timing loop
+,,,;=============================================
+00000153,30FF,,            movlw      .255
+00000154,0098,,            movwf      Temp
+00000155,,Pause1,Pause1
+00000155,0B98,,            decfsz     Temp,F
+00000156,2955,,            goto       Pause1
+,,,
+,,,;=============================================
+,,,;
+00000157,0A99,,            incf       LEDIndex,F
+00000158,1D99,,            btfss      LEDIndex,3
+00000159,2943,,            goto       EdtCycle    ; след. цифра
+,,,;
+0000015A,0199,,            clrf       LEDIndex
+0000015B,2822,,            goto       FunOff
+,,,;
+0000015C,,NextFun,NextFun
+0000015C,3000,,            movlw      0           ; выход из цикла редактирования
+0000015D,008D,,            movwf      KeyWait
+0000015E,2939,,            goto       Edt         ; next 8xLED
+,,,;
+0000015F,,WrtMem,WrtMem      ;      запись в EEPROM
+,,,
+0000015F,3000,,            movlw      0
+00000160,008B,,            movwf      IntCon      ; запрещение прерываний
+00000161,0089,,            movwf      EEAdr
+00000162,081F,,            movf       IF_H,w
+00000163,0088,,            movwf      EEData
+00000164,1683,,            bsf        Status,RP0
+00000165,1508,,            bsf        EECon1,2    ; разрешение записи
+00000166,3055,,            movlw      055h
+00000167,0089,,            movwf      EECon2
+00000168,30AA,,            movlw      0AAh
+00000169,0089,,            movwf      EECon2
+0000016A,1488,,            bsf        EECon1,1
+0000016B,,wr1,wr1
+0000016B,1E08,,            btfss      EECon1,4
+0000016C,296B,,            goto       wr1
+0000016D,1208,,            bcf        EECon1,4
+0000016E,1283,,            bcf        Status,RP0
+,,,
+0000016F,3001,,            movlw      1
+00000170,0089,,            movwf      EEAdr
+00000171,081E,,            movf       IF_M,w
+00000172,0088,,            movwf      EEData
+00000173,1683,,            bsf        Status,RP0
+00000174,1508,,            bsf        EECon1,2    ; разрешение записи
+00000175,3055,,            movlw      055h
+00000176,0089,,            movwf      EECon2
+00000177,30AA,,            movlw      0AAh
+00000178,0089,,            movwf      EECon2
+00000179,1488,,            bsf        EECon1,1
+0000017A,,wr2,wr2
+0000017A,1E08,,            btfss      EECon1,4
+0000017B,297A,,            goto       wr2
+0000017C,1208,,            bcf        EECon1,4
+0000017D,1283,,            bcf        Status,RP0
+,,,
+0000017E,3002,,            movlw      2
+0000017F,0089,,            movwf      EEAdr
+00000180,081D,,            movf       IF_L,w
+00000181,0088,,            movwf      EEData
+00000182,1683,,            bsf        Status,RP0
+00000183,1508,,            bsf        EECon1,2    ; разрешение записи
+00000184,3055,,            movlw      055h
+00000185,0089,,            movwf      EECon2
+00000186,30AA,,            movlw      0AAh
+00000187,0089,,            movwf      EECon2
+00000188,1488,,            bsf        EECon1,1
+00000189,,wr3,wr3
+00000189,1E08,,            btfss      EECon1,4
+0000018A,2989,,            goto       wr3
+0000018B,1208,,            bcf        EECon1,4
+0000018C,1283,,            bcf        Status,RP0
+,,,;
+0000018D,2927,,            goto       Go1
+,,,;
+,,,;=============================================
+,,,            end
