@@ -10,3 +10,13 @@
 *.sta
 *.sym
 *.tre
+*.p1
+*.pre
+*.p1.d
+*.hxl                                                                                                                                                             
+*.lst                                                                                                                                                             
+*.map                                                                                                                                                             
+*.obj                                                                                                                                                             
+*.rlf                                                                                                                                                             
+*.sdb                                                                                                                                                             
+*.sym

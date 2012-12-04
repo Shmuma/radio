@@ -1,0 +1,12 @@
+_BusyXLCD: CODE, 1413 0 69
+_putsXLCD: CODE, 1374 0 39
+_main: CODE, 1717 0 146
+_DelayFor18TCY: CODE, 1340 0 6
+_WriteCmdXLCD: CODE, 1559 0 77
+__initialization: CODE, 1336 0 0
+_OpenXLCD: CODE, 1863 0 185
+_WriteDataXLCD: CODE, 1482 0 77
+_SetDDRamAddr: CODE, 1636 0 81
+_DelayPORXLCD: CODE, 1346 0 10
+_Delay10KTCYx: CODE, 1356 0 18
+Total: 708
