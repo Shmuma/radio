@@ -20,3 +20,10 @@
 *.rlf                                                                                                                                                             
 *.sdb                                                                                                                                                             
 *.sym
+
+*.X.production.hxl
+*.X.production.map
+*.X.production.obj
+*.X.production.rlf
+*.X.production.sdb
+*.d

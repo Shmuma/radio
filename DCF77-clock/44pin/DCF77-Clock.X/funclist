@@ -1,12 +1,19 @@
-_BusyXLCD: CODE, 1413 0 69
-_putsXLCD: CODE, 1374 0 39
-_main: CODE, 1717 0 146
-_DelayFor18TCY: CODE, 1340 0 6
-_WriteCmdXLCD: CODE, 1559 0 77
-__initialization: CODE, 1336 0 0
-_OpenXLCD: CODE, 1863 0 185
-_WriteDataXLCD: CODE, 1482 0 77
-_SetDDRamAddr: CODE, 1636 0 81
-_DelayPORXLCD: CODE, 1346 0 10
-_Delay10KTCYx: CODE, 1356 0 18
-Total: 708
+_BusyXLCD: CODE, 870 0 69
+_putsXLCD: CODE, 1070 0 45
+__stringtab: STRING, 1115 0 6
+__stringdata: STRING, 1131 0 17
+_dpowers: STRING, 1121 0 10
+_main: CODE, 431 0 119
+_DelayFor18TCY: CODE, 1188 0 6
+_WriteCmdXLCD: CODE, 633 0 79
+__initialization: CODE, 1180 0 4
+_OpenXLCD: CODE, 244 0 187
+___lwdiv: CODE, 791 0 79
+_WriteDataXLCD: CODE, 712 0 79
+_isr: CODE, 1008 0 62
+_sprintf: CODE, 21 0 223
+_SetDDRamAddr: CODE, 550 0 83
+_DelayPORXLCD: CODE, 1170 0 10
+_Delay10KTCYx: CODE, 1148 0 22
+___lwmod: CODE, 939 0 69
+Total: 1169

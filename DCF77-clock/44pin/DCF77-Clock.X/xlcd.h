@@ -31,8 +31,8 @@
 //#define UPPER
 
 /* DATA_PORT defines the port to which the LCD data lines are connected */
-#define DATA_PORT           PORTC
-#define TRIS_DATA_PORT      TRISC
+#define DATA_PORT           PORTD
+#define TRIS_DATA_PORT      TRISD
 
 /* CTRL_PORT defines the port where the control lines are connected.
  * These are just samples, change to match your application.
