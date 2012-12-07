@@ -11,6 +11,11 @@
 #include <delays.h>
 #include <string.h>
 
+#define DCF77_PIN_DATA RB1
+
+#include "dcf77.h"
+
+
 #pragma config WDTE=OFF, LVP=OFF, FOSC=INTRC_NOCLKOUT
 #pragma config WRT=OFF
 
@@ -33,15 +38,13 @@ void DelayXLCD () {
     __delay_ms(5);
 }
 
-unsigned int passed, changes;
-
 interrupt void isr ()
 {
     // T1 overflowed, count time
     if (TMR1IF) {
-        passed++;
         TMR1 = TMR1_1MS;
         TMR1IF = 0;
+        dcf77_1ms_task ();
         return;
     }
 
@@ -50,14 +53,8 @@ interrupt void isr ()
         unsigned char dcf = RB1;
 
         if (!dcf) {
-            changes++;
-            // falling edge - reset overflow counter
-//            t0_overflows = 0;
+            // falling edge - reset counter of ms
         } else {
-            // raising edge
-//            delays[delays_index++] = t0_overflows;
-//            delays_index %= 10;
-//            pulse_delay = t0_overflows;
         }
         RD7 = RB1;
         RBIF = 0;
@@ -96,16 +93,26 @@ int main(int argc, char** argv) {
     PEIE = 1;
     GIE = 1;
 
-    unsigned char buf[40];
+    unsigned char buf[22];
+    unsigned char buf_pos = 0;
+
+    buf[0] = 0;
 
     while (1) {
-        sprintf (buf, "t = %u, c = %u  ", passed, changes);
-        putsXLCD(buf);
-        SetDDRamAddr(0x0);
-        while (BusyXLCD());
-        changes = passed = 0;
-        __delay_ms (1000);
-        RD6 = !RD6;
+        if (dcf77_newdata()) {
+            sprintf (buf, "+%02d:%02d", dcf77_get_hrs(), dcf77_get_min());
+            putsXLCD(buf);
+            SetDDRamAddr(0x0);
+            while (BusyXLCD());
+            RD6 = !RD6;
+        }
+        else {
+            sprintf(buf, "-%d", dcf77_sync_u8);
+            putsXLCD(buf);
+            SetDDRamAddr(0x0);
+            while (BusyXLCD());
+        }
+        __delay_ms(100);
     }
     return (EXIT_SUCCESS);
 }
