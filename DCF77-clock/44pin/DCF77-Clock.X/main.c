@@ -38,13 +38,19 @@ void DelayXLCD () {
     __delay_ms(5);
 }
 
+unsigned short ms_passed = 0, global_ms = 0;
+unsigned short low_time = 0, high_time = 0;
+bool ready = FALSE;
+
 interrupt void isr ()
 {
     // T1 overflowed, count time
     if (TMR1IF) {
         TMR1 = TMR1_1MS;
         TMR1IF = 0;
-        dcf77_1ms_task ();
+        ms_passed++;
+        global_ms++;
+//        dcf77_1ms_task ();
         return;
     }
 
@@ -54,7 +60,13 @@ interrupt void isr ()
 
         if (!dcf) {
             // falling edge - reset counter of ms
+            high_time = ms_passed;
+            ms_passed = 0;
+            ready = TRUE;
         } else {
+            // rising edge
+            low_time = ms_passed;
+            ms_passed = 0;
         }
         RD7 = RB1;
         RBIF = 0;
@@ -82,12 +94,12 @@ int main(int argc, char** argv) {
     WPUB1 = 0;
 
     // setup timer1 for 1ms overflow
-/*    TMR1 = TMR1_1MS;
+    TMR1 = TMR1_1MS;
     TMR1CS = 0;
     T1CKPS0 = 0;
     T1CKPS1 = 0;
     TMR1ON = 1;
-*/
+
     // LCD
     TRISD = 0;
     TRISA = 0;
@@ -117,9 +129,19 @@ int main(int argc, char** argv) {
 
     buf[0] = 0;
     unsigned char v = 0;
+    unsigned short sec = 0;
 
     while (1) {
-        uart_str ("Hello, from MCU!\n\r");
+        if (ready) {
+            if (global_ms / 1000 != sec) {
+                uart_str ("\n");
+                sec = global_ms / 1000;
+            }
+            sprintf (buf, "%5u, %03u: %u %u\n", sec, global_ms % 1000, low_time, high_time);
+            ready = FALSE;
+            uart_str (buf);
+        }
+//        uart_str ("Hello, from MCU!\n\r");
         /*        if (dcf77_newdata()) {
             sprintf (buf, "+%02d:%02d", dcf77_get_hrs(), dcf77_get_min());
             putsXLCD(buf);
@@ -134,7 +156,7 @@ int main(int argc, char** argv) {
             while (BusyXLCD());
         }
  */
-        __delay_ms(100);
+        __delay_ms(10);
     }
     return (EXIT_SUCCESS);
 }
