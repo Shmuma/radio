@@ -61,6 +61,18 @@ interrupt void isr ()
     }
 }
 
+void uart_str (const char* s)
+{
+    while (*s) {
+        if (!TXIF) {
+            __delay_ms (1);
+            continue;
+        }
+        TXREG = *s;
+        s++;
+    }
+}
+
 
 int main(int argc, char** argv) {
 
@@ -70,12 +82,12 @@ int main(int argc, char** argv) {
     WPUB1 = 0;
 
     // setup timer1 for 1ms overflow
-    TMR1 = TMR1_1MS;
+/*    TMR1 = TMR1_1MS;
     TMR1CS = 0;
     T1CKPS0 = 0;
     T1CKPS1 = 0;
     TMR1ON = 1;
-
+*/
     // LCD
     TRISD = 0;
     TRISA = 0;
@@ -93,13 +105,22 @@ int main(int argc, char** argv) {
     PEIE = 1;
     GIE = 1;
 
+    // EUSART - async mode
+    TXEN = 1;
+    SYNC = 0;
+    BRGH = 0;
+    SPBRG = 25; // 2400
+    SPEN = 1;
+
     unsigned char buf[22];
     unsigned char buf_pos = 0;
 
     buf[0] = 0;
+    unsigned char v = 0;
 
     while (1) {
-        if (dcf77_newdata()) {
+        uart_str ("Hello, from MCU!\n\r");
+        /*        if (dcf77_newdata()) {
             sprintf (buf, "+%02d:%02d", dcf77_get_hrs(), dcf77_get_min());
             putsXLCD(buf);
             SetDDRamAddr(0x0);
@@ -112,6 +133,7 @@ int main(int argc, char** argv) {
             SetDDRamAddr(0x0);
             while (BusyXLCD());
         }
+ */
         __delay_ms(100);
     }
     return (EXIT_SUCCESS);
