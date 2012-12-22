@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
     // DCF is on RB1
     TRISB1 = 1;
     ANS10 = 0;
-    WPUB1 = 0;
+    WPUB1 = 1;
 
     // setup timer1 for 1ms overflow
     TMR1 = TMR1_1MS;
@@ -109,11 +109,10 @@ int main(int argc, char** argv) {
     OpenXLCD (FOUR_BIT & LINES_5X7);
 
     // handle interrupts on B1 change
-//    IOCB1 = 1;
-    TRISB1 = 1;
+    IOCB1 = 1;
 
     // Interrupts
-//    RBIE = 1;
+    RBIE = 1;
     TMR1IE = 1;
     PEIE = 1;
     GIE = 1;
