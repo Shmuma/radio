@@ -19,7 +19,7 @@
 #pragma config WDTE=OFF, LVP=OFF, FOSC=INTRC_NOCLKOUT
 #pragma config WRT=OFF
 
-#ifndef _XTAS_FREQ
+#ifndef _XTAL_FREQ
 #define _XTAL_FREQ 4000000
 #endif
 
@@ -109,10 +109,11 @@ int main(int argc, char** argv) {
     OpenXLCD (FOUR_BIT & LINES_5X7);
 
     // handle interrupts on B1 change
-    IOCB1 = 1;
+//    IOCB1 = 1;
+    TRISB1 = 1;
 
     // Interrupts
-    RBIE = 1;
+//    RBIE = 1;
     TMR1IE = 1;
     PEIE = 1;
     GIE = 1;
