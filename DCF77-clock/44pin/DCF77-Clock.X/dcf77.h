@@ -409,11 +409,13 @@ void dcf77_1ms_task(void)
             if ( (dcf77_cntms_u16 > DCF77_BIT_LOW_MIN) && (dcf77_cntms_u16 < DCF77_BIT_LOW_MAX) )
             {
                 data_b = 0;
+                debounced_bit(0);
             }
             /* check for logic "1" */
             else if ( (dcf77_cntms_u16 > DCF77_BIT_HIGH_MIN) && (dcf77_cntms_u16 < DCF77_BIT_HIGH_MAX) )
             {
                 data_b = 1;
+                debounced_bit(1);
             }
             /* wrong timing detected */
             else

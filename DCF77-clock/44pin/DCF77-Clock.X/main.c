@@ -13,10 +13,20 @@
 
 #define DCF77_PIN_DATA RB1
 
+unsigned char cur_bit;
+unsigned char bit_ready = 0;
+
+void debounced_bit (unsigned char val)
+{
+    cur_bit = val;
+    bit_ready = 1;
+}
+
+
 #include "dcf77.h"
 
 
-#pragma config WDTE=OFF, LVP=OFF, FOSC=INTRC_NOCLKOUT
+#pragma config WDTE=OFF, LVP=OFF, FOSC=INTRC_NOCLKOUT, MCLRE=OFF
 #pragma config WRT=OFF
 
 #ifndef _XTAL_FREQ
@@ -50,12 +60,12 @@ interrupt void isr ()
         TMR1IF = 0;
         ms_passed++;
         global_ms++;
-//        dcf77_1ms_task ();
+        dcf77_1ms_task ();
         return;
     }
 
     // B1 changed
-    if (RBIF) {
+/*    if (RBIF) {
         unsigned char dcf = RB1;
 
         if (!dcf) {
@@ -71,6 +81,7 @@ interrupt void isr ()
         RD7 = RB1;
         RBIF = 0;
     }
+ */
 }
 
 void uart_str (const char* s)
@@ -109,7 +120,7 @@ int main(int argc, char** argv) {
     OpenXLCD (FOUR_BIT & LINES_5X7);
 
     // handle interrupts on B1 change
-    IOCB1 = 1;
+//    IOCB1 = 1;
 
     // Interrupts
     RBIE = 1;
@@ -132,14 +143,19 @@ int main(int argc, char** argv) {
     unsigned short sec = 0;
 
     while (1) {
-        if (ready) {
+        if (bit_ready) {
             if (global_ms / 1000 != sec) {
                 uart_str ("\n");
                 sec = global_ms / 1000;
             }
-            sprintf (buf, "%5u, %03u: %u %u\n", sec, global_ms % 1000, low_time, high_time);
-            ready = FALSE;
+            sprintf (buf, "%5u, %03u: %c, sync = %u\n", sec, global_ms % 1000, cur_bit ? '1' : '0', dcf77_sync_u8);
+            bit_ready = FALSE;
             uart_str (buf);
+            if (dcf77_get_sync()) {
+                sprintf (buf, "%02u-%02u-%04u %02u:%02u\n", dcf77_get_day(), dcf77_get_month(), dcf77_get_year(),
+                        dcf77_get_hrs(), dcf77_get_min());
+                uart_str(buf);
+            }
         }
 //        uart_str ("Hello, from MCU!\n\r");
         /*        if (dcf77_newdata()) {
