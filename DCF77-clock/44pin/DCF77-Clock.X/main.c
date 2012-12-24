@@ -13,19 +13,6 @@
 
 #define DCF77_PIN_DATA RB1
 
-unsigned char cur_bit;
-unsigned char bit_ready = 0;
-
-void debounced_bit (unsigned char val)
-{
-    cur_bit = val;
-    bit_ready = 1;
-}
-
-
-#include "dcf77.h"
-
-
 #pragma config WDTE=OFF, LVP=OFF, FOSC=INTRC_NOCLKOUT, MCLRE=OFF
 #pragma config WRT=OFF
 
@@ -48,9 +35,12 @@ void DelayXLCD () {
     __delay_ms(5);
 }
 
-unsigned short ms_passed = 0, global_ms = 0;
-unsigned short low_time = 0, high_time = 0;
-bool ready = FALSE;
+unsigned short buf = 0;
+unsigned char buf_bits = 0;
+
+unsigned short buf_out = 0;
+unsigned char buf_ready = 0;
+unsigned char overflows = 0;
 
 interrupt void isr ()
 {
@@ -58,9 +48,22 @@ interrupt void isr ()
     if (TMR1IF) {
         TMR1 = TMR1_1MS;
         TMR1IF = 0;
-        ms_passed++;
-        global_ms++;
-        dcf77_1ms_task ();
+
+        // place data ready to be sent
+        if (buf_bits == 16) {
+            if (buf_ready) {
+                RD7 = !RD7;
+                overflows++;
+            }
+            buf_out = buf;
+            buf_ready = 1;
+            buf_bits = 0;
+        }
+
+        buf <<= 1;
+        if (DCF77_PIN_DATA)
+            buf |= 1;
+        buf_bits++;
         return;
     }
 
@@ -131,48 +134,25 @@ int main(int argc, char** argv) {
     // EUSART - async mode
     TXEN = 1;
     SYNC = 0;
-    BRGH = 0;
-    SPBRG = 25; // 2400
+    BRGH = 1;
+    SPBRG = 12; // 19200
     SPEN = 1;
 
     unsigned char buf[22];
-    unsigned char buf_pos = 0;
-
-    buf[0] = 0;
-    unsigned char v = 0;
-    unsigned short sec = 0;
+    unsigned char wrap = 16;
 
     while (1) {
-        if (bit_ready) {
-            if (global_ms / 1000 != sec) {
-                uart_str ("\n");
-                sec = global_ms / 1000;
-            }
-            sprintf (buf, "%5u, %03u: %c, sync = %u\n", sec, global_ms % 1000, cur_bit ? '1' : '0', dcf77_sync_u8);
-            bit_ready = FALSE;
+        if (buf_ready) {
+            sprintf (buf, "%04X ", buf_out);
+            buf_ready = 0;
             uart_str (buf);
-            if (dcf77_get_sync()) {
-                sprintf (buf, "%02u-%02u-%04u %02u:%02u\n", dcf77_get_day(), dcf77_get_month(), dcf77_get_year(),
-                        dcf77_get_hrs(), dcf77_get_min());
-                uart_str(buf);
+            if (!--wrap) {
+                uart_str ("\n");
+                wrap = 16;
             }
+
         }
-//        uart_str ("Hello, from MCU!\n\r");
-        /*        if (dcf77_newdata()) {
-            sprintf (buf, "+%02d:%02d", dcf77_get_hrs(), dcf77_get_min());
-            putsXLCD(buf);
-            SetDDRamAddr(0x0);
-            while (BusyXLCD());
-            RD6 = !RD6;
-        }
-        else {
-            sprintf(buf, "-%d", dcf77_sync_u8);
-            putsXLCD(buf);
-            SetDDRamAddr(0x0);
-            while (BusyXLCD());
-        }
- */
-        __delay_ms(10);
+//        __delay_ms(10);
     }
     return (EXIT_SUCCESS);
 }
