@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
     SPEN = 1;
 
     unsigned char buf[22];
-    unsigned char wrap = 16;
+    unsigned char wrap = 32;
 
     while (1) {
         if (buf_ready) {
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
             uart_str (buf);
             if (!--wrap) {
                 uart_str ("\n");
-                wrap = 16;
+                wrap = 32;
             }
 
         }
